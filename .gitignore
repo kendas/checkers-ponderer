@@ -1,0 +1,11 @@
+# Rust
+/rs/target
+**/*.rs.bk
+/rs/Cargo.lock
+bin/
+/rs/pkg/
+wasm-pack.log
+
+# Node.js
+node_modules/
+dist/
