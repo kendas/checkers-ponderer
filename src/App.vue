@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from "vue";
 import CheckersBoard from "./components/CheckersBoard.vue";
-import * as engine from 'engine';
+// import * as engine from 'engine';
 
 export default Vue.extend({
   name: "App",
@@ -15,7 +15,7 @@ export default Vue.extend({
     CheckersBoard
   },
   created() {
-    engine.greet()
+    // engine.greet()
   }
 });
 </script>

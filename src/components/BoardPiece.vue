@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
-import { PlayerColor } from "../interfaces";
+import { PlayerColor } from "@/interfaces";
 
 export default Vue.extend({
   props: {

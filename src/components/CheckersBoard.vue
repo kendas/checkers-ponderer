@@ -7,7 +7,8 @@
         :key="`${row}-${col}`"
         class="square"
         :is-white="square.isWhite"
-        @click="onSquareClick(row, col)"
+        :is-selected="isSelected(row, col)"
+        @click.native="onSquareClick(row, col)"
       >
         <board-piece
           v-if="square.piece !== undefined"
@@ -26,49 +27,44 @@
 <script lang="ts">
 import Vue from "vue";
 
-import Square from "./Square.vue";
-import BoardPiece from "./BoardPiece.vue";
-import { Piece, PlayerColor } from "../interfaces";
+import Square from "@/components/Square.vue";
+import BoardPiece from "@/components/BoardPiece.vue";
+import { generateStartingBoard } from "@/utils/board";
+import { BoardSquare } from "@/interfaces";
 
-interface GeneratedSquare {
-  isWhite: boolean;
-  piece?: Piece;
+interface ComponentData {
+  rows: ["8", "7", "6", "5", "4", "3", "2", "1"];
+  cols: ["A", "B", "C", "D", "E", "F", "G", "H"];
+  board: BoardSquare[][];
+  selectedSquare: [number, number] | null;
 }
 
 export default Vue.extend({
   components: { Square, BoardPiece },
-  data() {
+  data(): ComponentData {
     return {
       rows: ["8", "7", "6", "5", "4", "3", "2", "1"],
       cols: ["A", "B", "C", "D", "E", "F", "G", "H"],
+      board: generateStartingBoard(),
+      selectedSquare: null,
     };
   },
-  computed: {
-    board(): GeneratedSquare[][] {
-      const result: GeneratedSquare[][] = [];
-      for (let row = 0; row < 8; row++) {
-        const rowCells: GeneratedSquare[] = [];
-        for (let col = 0; col < 8; col++) {
-          const isWhite = !!((row + col) % 2);
-          let piece: Piece | undefined;
-          if (!isWhite) {
-            if (row < 3) {
-              piece = { color: PlayerColor.black, isKing: false };
-            } else if (row > 4) {
-              piece = { color: PlayerColor.white, isKing: false };
-            }
-          }
-          const cell: GeneratedSquare = { isWhite, piece };
-          rowCells.push(cell);
-        }
-        result.push(rowCells);
-      }
-      return result;
-    },
-  },
+  computed: {},
   methods: {
     onSquareClick(row: number, col: number) {
-      console.log(`Clicked: ${this.cols[col]}${this.rows[row]}`);
+      if (
+        this.board[row][col].piece !== undefined &&
+        !this.isSelected(row, col)
+      ) {
+        this.selectedSquare = [row, col];
+      } else {
+        this.selectedSquare = null;
+      }
+    },
+    isSelected(row: number, col: number): boolean {
+      return (
+        this.selectedSquare?.[0] === row && this.selectedSquare?.[1] == col
+      );
     },
   },
 });
