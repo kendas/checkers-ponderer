@@ -1,4 +1,5 @@
 mod utils;
+mod board;
 
 use wasm_bindgen::prelude::*;
 
