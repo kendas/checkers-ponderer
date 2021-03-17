@@ -195,3 +195,21 @@ fn allows_iterating_over_black_pieces() {
         assert_eq!(expected.1, actual.1);
     }
 }
+
+
+#[test]
+fn produces_valid_moves_for_a_piece_normal_piece() {
+    let board = Board::new();
+
+    let moves = board.moves_for(Position(5, 1));
+
+    assert_eq!(moves.len(), 2);
+    match &moves[0] {
+        Movement::Free(position) => assert_eq!(position, &Position(4, 0)),
+        other => panic!("Unexpected move {:?}", other)
+    }
+    match &moves[1] {
+        Movement::Free(position) => assert_eq!(position, &Position(4, 2)),
+        other => panic!("Unexpected move {:?}", other)
+    }
+}

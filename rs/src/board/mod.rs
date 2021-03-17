@@ -1,5 +1,8 @@
+use crate::rules::{self, Movement};
+
 pub struct Board {
-    squares: [[Option<Piece>; 4]; 8],
+    // TODO: Remove pub
+    pub squares: [[Option<Piece>; 4]; 8],
 }
 
 impl Board {
@@ -81,12 +84,16 @@ impl Board {
     pub fn pieces(&self, color: Color) -> impl Iterator<Item = (&Piece, Position)> {
         self.all_pieces().filter(move |(piece, _)| piece.color == color)
     }
+
+    pub fn moves_for(&self, position: Position) -> Vec<Movement> {
+        rules::get_moves(self, position)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Piece {
-    color: Color,
-    is_king: bool,
+    pub color: Color,
+    pub is_king: bool,
 }
 
 #[repr(u8)]
@@ -97,7 +104,7 @@ pub enum Color {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Position(usize, usize);
+pub struct Position(pub usize, pub usize);
 
 #[cfg(test)]
 mod tests;
