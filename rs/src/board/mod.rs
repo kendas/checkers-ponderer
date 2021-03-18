@@ -31,7 +31,7 @@ impl Board {
         }
     }
 
-    pub fn piece_count(&self, color: Color) -> usize {
+    pub fn count_pieces(&self, color: Color) -> usize {
         self.squares
             .iter()
             .flatten()

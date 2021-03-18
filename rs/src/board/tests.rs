@@ -4,8 +4,8 @@ use super::*;
 fn constructs_a_starting_board_with_12_pieces() {
     let board = Board::new();
 
-    assert_eq!(board.piece_count(Color::White), 12);
-    assert_eq!(board.piece_count(Color::Black), 12);
+    assert_eq!(board.count_pieces(Color::White), 12);
+    assert_eq!(board.count_pieces(Color::Black), 12);
 
     let black_pieces = vec![
         Position(0, 0),
