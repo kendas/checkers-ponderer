@@ -132,7 +132,7 @@ fn allows_iterating_over_pieces() {
         (&white_piece, Position(7, 7)), // 1st white row
     ];
 
-    for (expected, actual) in board.all_pieces().zip(expected) {
+    for (expected, actual) in board.all_pieces().into_iter().zip(expected) {
         assert_eq!(expected.0, actual.0);
         assert_eq!(expected.1, actual.1);
     }
@@ -161,7 +161,7 @@ fn allows_iterating_over_white_pieces() {
         (&white_piece, Position(7, 7)), // 1st white row
     ];
 
-    for (expected, actual) in board.pieces(Color::White).zip(expected) {
+    for (expected, actual) in board.pieces(Color::White).into_iter().zip(expected) {
         assert_eq!(expected.0, actual.0);
         assert_eq!(expected.1, actual.1);
     }
@@ -190,15 +190,14 @@ fn allows_iterating_over_black_pieces() {
         (&black_piece, Position(2, 6)), // 3rd black row
     ];
 
-    for (expected, actual) in board.pieces(Color::Black).zip(expected) {
+    for (expected, actual) in board.pieces(Color::Black).into_iter().zip(expected) {
         assert_eq!(expected.0, actual.0);
         assert_eq!(expected.1, actual.1);
     }
 }
 
-
 #[test]
-fn produces_valid_moves_for_a_piece_normal_piece() {
+fn produces_valid_moves_for_a_starting_board() {
     let board = Board::new();
 
     let moves = board.moves_for(Position(5, 1));
@@ -206,10 +205,23 @@ fn produces_valid_moves_for_a_piece_normal_piece() {
     assert_eq!(moves.len(), 2);
     match &moves[0] {
         Movement::Free(position) => assert_eq!(position, &Position(4, 0)),
-        other => panic!("Unexpected move {:?}", other)
+        other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
         Movement::Free(position) => assert_eq!(position, &Position(4, 2)),
-        other => panic!("Unexpected move {:?}", other)
+        other => panic!("Unexpected move {:?}", other),
     }
+}
+
+#[test]
+fn produces_valid_movable_pieces_for_a_staring_board() {
+    let board = Board::new();
+
+    let pieces = board.get_movable_pieces(Color::White);
+
+    assert_eq!(pieces.len(), 4);
+    assert_eq!(pieces[0], Position(5, 1));
+    assert_eq!(pieces[1], Position(5, 3));
+    assert_eq!(pieces[2], Position(5, 5));
+    assert_eq!(pieces[3], Position(5, 7));
 }

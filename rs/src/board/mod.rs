@@ -67,7 +67,33 @@ impl Board {
         }
     }
 
-    pub fn all_pieces(&self) -> impl Iterator<Item = (&Piece, Position)> {
+    pub fn all_pieces(&self) -> Vec<(&Piece, Position)> {
+        self.get_normalized_pieces().collect()
+    }
+
+    pub fn pieces(&self, color: Color) -> Vec<(&Piece, Position)> {
+        self.get_normalized_pieces()
+            .filter(move |(piece, _)| piece.color == color)
+            .collect()
+    }
+
+    pub fn moves_for(&self, position: Position) -> Vec<Movement> {
+        rules::get_moves(self, position)
+    }
+
+    pub fn get_movable_pieces(&self, color: Color) -> Vec<Position> {
+        let mut pieces = vec![];
+        for (piece, position) in self.pieces(color) {
+            if !self.moves_for(position).is_empty() {
+                pieces.push(position);
+            }
+        }
+        pieces
+    }
+}
+
+impl Board {
+    fn get_normalized_pieces(&self) -> impl Iterator<Item = (&Piece, Position)> {
         self.squares
             .iter()
             .enumerate()
@@ -76,17 +102,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, piece)| piece.is_some())
-                    .map(move |(col, piece)| (piece.as_ref().unwrap(), Position(row, col * 2 + row % 2)))
+                    .map(move |(col, piece)| {
+                        (piece.as_ref().unwrap(), Position(row, col * 2 + row % 2))
+                    })
             })
             .flatten()
-    }
-
-    pub fn pieces(&self, color: Color) -> impl Iterator<Item = (&Piece, Position)> {
-        self.all_pieces().filter(move |(piece, _)| piece.color == color)
-    }
-
-    pub fn moves_for(&self, position: Position) -> Vec<Movement> {
-        rules::get_moves(self, position)
     }
 }
 
