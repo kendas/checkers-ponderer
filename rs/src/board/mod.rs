@@ -1,8 +1,10 @@
+use wasm_bindgen::prelude::*;
+
 use crate::rules::{self, Movement};
 
+#[wasm_bindgen]
 pub struct Board {
-    // TODO: Remove pub
-    pub squares: [[Option<Piece>; 4]; 8],
+    squares: [[Option<Piece>; 4]; 8],
 }
 
 impl Board {
@@ -92,7 +94,12 @@ impl Board {
     }
 }
 
+// Not exported
 impl Board {
+    pub(crate) fn from(squares: [[Option<Piece>; 4]; 8]) -> Board {
+        Board { squares }
+    }
+
     fn get_normalized_pieces(&self) -> impl Iterator<Item = (&Piece, Position)> {
         self.squares
             .iter()

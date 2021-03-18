@@ -471,5 +471,5 @@ fn make_board(board: [&str; 8]) -> Board {
             }
         }
     }
-    Board { squares }
+    Board::from(squares)
 }
