@@ -107,7 +107,7 @@ fn allows_iterating_over_pieces() {
         color: Color::White,
         is_king: false,
     };
-    let expected = vec![
+    let expected: Vec<(Piece, (usize, usize))> = vec![
         (black_piece, (0, 0)),
         (black_piece, (0, 2)),
         (black_piece, (0, 4)),
@@ -135,8 +135,14 @@ fn allows_iterating_over_pieces() {
     ];
 
     for (expected, actual) in board.all_pieces().into_iter().zip(expected) {
-        assert_eq!(expected.0, actual.0);
-        assert_eq!(expected.1, actual.1);
+        assert_eq!(
+            Piece {
+                color: expected.color,
+                is_king: expected.is_king
+            },
+            actual.0
+        );
+        assert_eq!((expected.row, expected.col), actual.1);
     }
 }
 
@@ -148,7 +154,7 @@ fn allows_iterating_over_white_pieces() {
         color: Color::White,
         is_king: false,
     };
-    let expected = vec![
+    let expected: Vec<(Piece, (usize, usize))> = vec![
         (white_piece, (5, 1)),
         (white_piece, (5, 3)),
         (white_piece, (5, 5)),
@@ -164,8 +170,14 @@ fn allows_iterating_over_white_pieces() {
     ];
 
     for (expected, actual) in board.pieces(Color::White).into_iter().zip(expected) {
-        assert_eq!(expected.0, actual.0);
-        assert_eq!(expected.1, actual.1);
+        assert_eq!(
+            Piece {
+                color: expected.color,
+                is_king: expected.is_king
+            },
+            actual.0
+        );
+        assert_eq!((expected.row, expected.col), actual.1);
     }
 }
 
@@ -177,7 +189,7 @@ fn allows_iterating_over_black_pieces() {
         color: Color::Black,
         is_king: false,
     };
-    let expected = vec![
+    let expected: Vec<(Piece, (usize, usize))> = vec![
         (black_piece, (0, 0)),
         (black_piece, (0, 2)),
         (black_piece, (0, 4)),
@@ -193,8 +205,14 @@ fn allows_iterating_over_black_pieces() {
     ];
 
     for (expected, actual) in board.pieces(Color::Black).into_iter().zip(expected) {
-        assert_eq!(expected.0, actual.0);
-        assert_eq!(expected.1, actual.1);
+        assert_eq!(
+            Piece {
+                color: expected.color,
+                is_king: expected.is_king
+            },
+            actual.0
+        );
+        assert_eq!((expected.row, expected.col), actual.1);
     }
 }
 
@@ -230,8 +248,8 @@ fn produces_valid_movable_pieces_for_a_staring_board() {
     let pieces = board.get_movable_pieces(Color::White);
 
     assert_eq!(pieces.len(), 4);
-    assert_eq!(pieces[0], (5, 1));
-    assert_eq!(pieces[1], (5, 3));
-    assert_eq!(pieces[2], (5, 5));
-    assert_eq!(pieces[3], (5, 7));
+    assert_eq!((pieces[0].row, pieces[0].col), (5, 1));
+    assert_eq!((pieces[1].row, pieces[1].col), (5, 3));
+    assert_eq!((pieces[2].row, pieces[2].col), (5, 5));
+    assert_eq!((pieces[3].row, pieces[3].col), (5, 7));
 }

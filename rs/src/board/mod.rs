@@ -42,30 +42,46 @@ impl Board {
             .count()
     }
 
-    pub fn get(&self, row: usize, col: usize) -> Option<Piece> {
+    pub fn get(&self, row: usize, col: usize) -> Option<GamePiece> {
         if row >= 8 || row >= 8 {
             return None;
         }
         match (row % 2, col % 2) {
             (0, 0) => {
-                let col = col / 2;
-                self.squares[row][col]
+                let inner_col = col / 2;
+                match &self.squares[row][inner_col] {
+                    Some(piece) => Some(GamePiece {
+                        color: piece.color,
+                        is_king: piece.is_king,
+                        row,
+                        col,
+                    }),
+                    _ => None,
+                }
             }
             (1, 1) => {
-                let col = (col - 1) / 2;
-                self.squares[row][col]
+                let inner_col = (col - 1) / 2;
+                match &self.squares[row][inner_col] {
+                    Some(piece) => Some(GamePiece {
+                        color: piece.color,
+                        is_king: piece.is_king,
+                        row,
+                        col,
+                    }),
+                    _ => None,
+                }
             }
             _ => None,
         }
     }
 
-    pub fn all_pieces(&self) -> Vec<(Piece, (usize, usize))> {
+    pub fn all_pieces(&self) -> Vec<GamePiece> {
         self.get_normalized_pieces().collect()
     }
 
-    pub fn pieces(&self, color: Color) -> Vec<(Piece, (usize, usize))> {
+    pub fn pieces(&self, color: Color) -> Vec<GamePiece> {
         self.get_normalized_pieces()
-            .filter(move |(piece, _)| piece.color == color)
+            .filter(move |piece| piece.color == color)
             .collect()
     }
 
@@ -73,14 +89,11 @@ impl Board {
         rules::get_moves(&self, row, col)
     }
 
-    pub fn get_movable_pieces(&self, color: Color) -> Vec<(usize, usize)> {
-        let mut pieces = vec![];
-        for (_, (row, col)) in self.pieces(color) {
-            if !self.moves_for(row, col).is_empty() {
-                pieces.push((row, col));
-            }
-        }
-        pieces
+    pub fn get_movable_pieces(&self, color: Color) -> Vec<GamePiece> {
+        self.get_normalized_pieces()
+            .filter(move |piece| piece.color == color)
+            .filter(|piece| !self.moves_for(piece.row, piece.col).is_empty())
+            .collect()
     }
 }
 
@@ -90,7 +103,7 @@ impl Board {
         Board { squares }
     }
 
-    fn get_normalized_pieces(&self) -> impl Iterator<Item = (Piece, (usize, usize))> + '_ {
+    fn get_normalized_pieces(&self) -> impl Iterator<Item = GamePiece> + '_ {
         self.squares
             .iter()
             .enumerate()
@@ -99,10 +112,27 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, piece)| piece.is_some())
-                    .map(move |(col, piece)| (piece.as_ref().unwrap().clone(), (row, col * 2 + row % 2)))
+                    .map(move |(col, piece)| {
+                        let piece = piece.as_ref().unwrap();
+                        GamePiece {
+                            color: piece.color,
+                            is_king: piece.is_king,
+                            row,
+                            col: col * 2 + row % 2,
+                        }
+                    })
             })
             .flatten()
     }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct GamePiece {
+    pub color: Color,
+    pub is_king: bool,
+    pub row: usize,
+    pub col: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
