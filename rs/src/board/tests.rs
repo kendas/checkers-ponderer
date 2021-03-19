@@ -106,30 +106,30 @@ fn allows_iterating_over_pieces() {
         is_king: false,
     };
     let expected = vec![
-        (&black_piece, (0, 0)),
-        (&black_piece, (0, 2)),
-        (&black_piece, (0, 4)),
-        (&black_piece, (0, 6)), // 1st black row
-        (&black_piece, (1, 1)),
-        (&black_piece, (1, 3)),
-        (&black_piece, (1, 5)),
-        (&black_piece, (1, 7)), // 2nd black row
-        (&black_piece, (2, 0)),
-        (&black_piece, (2, 2)),
-        (&black_piece, (2, 4)),
-        (&black_piece, (2, 6)), // 3rd black row
-        (&white_piece, (5, 1)),
-        (&white_piece, (5, 3)),
-        (&white_piece, (5, 5)),
-        (&white_piece, (5, 7)), // 3rd white row
-        (&white_piece, (6, 0)),
-        (&white_piece, (6, 2)),
-        (&white_piece, (6, 4)),
-        (&white_piece, (6, 6)), // 2nd white row
-        (&white_piece, (7, 1)),
-        (&white_piece, (7, 3)),
-        (&white_piece, (7, 5)),
-        (&white_piece, (7, 7)), // 1st white row
+        (black_piece, (0, 0)),
+        (black_piece, (0, 2)),
+        (black_piece, (0, 4)),
+        (black_piece, (0, 6)), // 1st black row
+        (black_piece, (1, 1)),
+        (black_piece, (1, 3)),
+        (black_piece, (1, 5)),
+        (black_piece, (1, 7)), // 2nd black row
+        (black_piece, (2, 0)),
+        (black_piece, (2, 2)),
+        (black_piece, (2, 4)),
+        (black_piece, (2, 6)), // 3rd black row
+        (white_piece, (5, 1)),
+        (white_piece, (5, 3)),
+        (white_piece, (5, 5)),
+        (white_piece, (5, 7)), // 3rd white row
+        (white_piece, (6, 0)),
+        (white_piece, (6, 2)),
+        (white_piece, (6, 4)),
+        (white_piece, (6, 6)), // 2nd white row
+        (white_piece, (7, 1)),
+        (white_piece, (7, 3)),
+        (white_piece, (7, 5)),
+        (white_piece, (7, 7)), // 1st white row
     ];
 
     for (expected, actual) in board.all_pieces().into_iter().zip(expected) {
@@ -147,18 +147,18 @@ fn allows_iterating_over_white_pieces() {
         is_king: false,
     };
     let expected = vec![
-        (&white_piece, (5, 1)),
-        (&white_piece, (5, 3)),
-        (&white_piece, (5, 5)),
-        (&white_piece, (5, 7)), // 3rd white row
-        (&white_piece, (6, 0)),
-        (&white_piece, (6, 2)),
-        (&white_piece, (6, 4)),
-        (&white_piece, (6, 6)), // 2nd white row
-        (&white_piece, (7, 1)),
-        (&white_piece, (7, 3)),
-        (&white_piece, (7, 5)),
-        (&white_piece, (7, 7)), // 1st white row
+        (white_piece, (5, 1)),
+        (white_piece, (5, 3)),
+        (white_piece, (5, 5)),
+        (white_piece, (5, 7)), // 3rd white row
+        (white_piece, (6, 0)),
+        (white_piece, (6, 2)),
+        (white_piece, (6, 4)),
+        (white_piece, (6, 6)), // 2nd white row
+        (white_piece, (7, 1)),
+        (white_piece, (7, 3)),
+        (white_piece, (7, 5)),
+        (white_piece, (7, 7)), // 1st white row
     ];
 
     for (expected, actual) in board.pieces(Color::White).into_iter().zip(expected) {
@@ -176,18 +176,18 @@ fn allows_iterating_over_black_pieces() {
         is_king: false,
     };
     let expected = vec![
-        (&black_piece, (0, 0)),
-        (&black_piece, (0, 2)),
-        (&black_piece, (0, 4)),
-        (&black_piece, (0, 6)), // 1st black row
-        (&black_piece, (1, 1)),
-        (&black_piece, (1, 3)),
-        (&black_piece, (1, 5)),
-        (&black_piece, (1, 7)), // 2nd black row
-        (&black_piece, (2, 0)),
-        (&black_piece, (2, 2)),
-        (&black_piece, (2, 4)),
-        (&black_piece, (2, 6)), // 3rd black row
+        (black_piece, (0, 0)),
+        (black_piece, (0, 2)),
+        (black_piece, (0, 4)),
+        (black_piece, (0, 6)), // 1st black row
+        (black_piece, (1, 1)),
+        (black_piece, (1, 3)),
+        (black_piece, (1, 5)),
+        (black_piece, (1, 7)), // 2nd black row
+        (black_piece, (2, 0)),
+        (black_piece, (2, 2)),
+        (black_piece, (2, 4)),
+        (black_piece, (2, 6)), // 3rd black row
     ];
 
     for (expected, actual) in board.pieces(Color::Black).into_iter().zip(expected) {

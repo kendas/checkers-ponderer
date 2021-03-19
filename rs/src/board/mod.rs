@@ -58,11 +58,11 @@ impl Board {
         }
     }
 
-    pub fn all_pieces(&self) -> Vec<(&Piece, (usize, usize))> {
+    pub fn all_pieces(&self) -> Vec<(Piece, (usize, usize))> {
         self.get_normalized_pieces().collect()
     }
 
-    pub fn pieces(&self, color: Color) -> Vec<(&Piece, (usize, usize))> {
+    pub fn pieces(&self, color: Color) -> Vec<(Piece, (usize, usize))> {
         self.get_normalized_pieces()
             .filter(move |(piece, _)| piece.color == color)
             .collect()
@@ -89,7 +89,7 @@ impl Board {
         Board { squares }
     }
 
-    fn get_normalized_pieces(&self) -> impl Iterator<Item = (&Piece, (usize, usize))> {
+    fn get_normalized_pieces(&self) -> impl Iterator<Item = (Piece, (usize, usize))> + '_ {
         self.squares
             .iter()
             .enumerate()
@@ -98,7 +98,7 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, piece)| piece.is_some())
-                    .map(move |(col, piece)| (piece.as_ref().unwrap(), (row, col * 2 + row % 2)))
+                    .map(move |(col, piece)| (piece.as_ref().unwrap().clone(), (row, col * 2 + row % 2)))
             })
             .flatten()
     }
@@ -110,6 +110,7 @@ pub struct Piece {
     pub is_king: bool,
 }
 
+#[wasm_bindgen]
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Color {

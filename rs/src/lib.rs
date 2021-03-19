@@ -19,3 +19,5 @@ extern {
 pub fn greet() {
     alert("Hello, checkers-ponderer!");
 }
+
+pub use board::Board;
