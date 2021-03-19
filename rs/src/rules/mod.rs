@@ -1,9 +1,11 @@
-use crate::board::{Board, Color, Piece, Position};
+use std::usize;
+
+use crate::board::{Board, Color, Piece};
 
 #[derive(Debug)]
 pub enum Movement {
-    Free(Position),
-    Forced(Position),
+    Free(usize, usize),
+    Forced(usize, usize),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -21,23 +23,23 @@ macro_rules! matches(
     )
 );
 
-pub fn get_moves(board: &Board, position: Position) -> Vec<Movement> {
-    match board.get(position) {
+pub fn get_moves(board: &Board, row: usize, col: usize) -> Vec<Movement> {
+    match board.get(row, col) {
         Some(piece) => {
             let possibilities = get_possibilities(&piece);
 
             let mut moves = vec![];
             for (row_direction, col_direction) in possibilities {
-                if let Some(position) = get_next(position, row_direction, col_direction) {
-                    match board.get(position) {
-                        None => moves.push(Movement::Free(position)),
+                if let Some((row, col)) = get_next(row, col, row_direction, col_direction) {
+                    match board.get(row, col) {
+                        None => moves.push(Movement::Free(row, col)),
                         Some(other_piece) => {
                             if other_piece.color != piece.color {
-                                if let Some(position) =
-                                    get_next(position, row_direction, col_direction)
+                                if let Some((row, col)) =
+                                    get_next(row, col, row_direction, col_direction)
                                 {
-                                    if board.get(position).is_none() {
-                                        moves.push(Movement::Forced(position));
+                                    if board.get(row, col).is_none() {
+                                        moves.push(Movement::Forced(row, col));
                                     }
                                 }
                             }
@@ -46,10 +48,10 @@ pub fn get_moves(board: &Board, position: Position) -> Vec<Movement> {
                 }
             }
 
-            if moves.iter().any(|m| matches!(m, Movement::Forced(_))) {
+            if moves.iter().any(|m| matches!(m, Movement::Forced(_, _))) {
                 moves
                     .into_iter()
-                    .filter(|m| matches!(m, Movement::Forced(_)))
+                    .filter(|m| matches!(m, Movement::Forced(_, _)))
                     .collect()
             } else {
                 moves
@@ -60,29 +62,30 @@ pub fn get_moves(board: &Board, position: Position) -> Vec<Movement> {
 }
 
 fn get_next(
-    position: Position,
+    row: usize,
+    col: usize,
     row_direction: Direction,
     col_direction: Direction,
-) -> Option<Position> {
+) -> Option<(usize, usize)> {
     use Direction::*;
-    if matches!(row_direction, Decrease) && position.0 <= 0 {
+    if matches!(row_direction, Decrease) && row <= 0 {
         None
-    } else if matches!(row_direction, Increase) && position.0 >= 7 {
+    } else if matches!(row_direction, Increase) && row >= 7 {
         None
-    } else if matches!(col_direction, Decrease) && position.1 <= 0 {
+    } else if matches!(col_direction, Decrease) && col <= 0 {
         None
-    } else if matches!(col_direction, Increase) && position.1 >= 7 {
+    } else if matches!(col_direction, Increase) && col >= 7 {
         None
     } else {
         let row = match row_direction {
-            Increase => position.0 + 1,
-            Decrease => position.0 - 1,
+            Increase => row + 1,
+            Decrease => row - 1,
         };
         let col = match col_direction {
-            Increase => position.1 + 1,
-            Decrease => position.1 - 1,
+            Increase => col + 1,
+            Decrease => col - 1,
         };
-        Some(Position(row, col))
+        Some((row, col))
     }
 }
 

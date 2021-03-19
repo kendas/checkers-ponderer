@@ -1,5 +1,5 @@
 use super::*;
-use crate::board::{Board, Color, Piece, Position};
+use crate::board::{Board, Color, Piece};
 
 #[test]
 fn non_king_white_free_movement() {
@@ -14,15 +14,15 @@ fn non_king_white_free_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 2));
+    let moves = get_moves(&board, 4, 2);
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 1)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -40,11 +40,11 @@ fn non_king_white_free_movement_blocked_by_friendly() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 2));
+    let moves = get_moves(&board, 4, 2);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 1)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -62,11 +62,11 @@ fn non_king_white_free_movement_blocked_by_left_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 0));
+    let moves = get_moves(&board, 4, 0);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 1)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -84,11 +84,11 @@ fn non_king_white_free_movement_blocked_by_right_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(3, 7));
+    let moves = get_moves(&board, 3, 7);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(2, 6)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -106,11 +106,11 @@ fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 6));
+    let moves = get_moves(&board, 4, 6);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 5)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -128,11 +128,11 @@ fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(3, 1));
+    let moves = get_moves(&board, 3, 1);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(2, 2)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&2, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -150,11 +150,11 @@ fn non_king_white_forced_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 2));
+    let moves = get_moves(&board, 4, 2);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(position) => assert_eq!(position, &Position(2, 4)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &4)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -172,15 +172,15 @@ fn non_king_white_forced_movement_with_possibilities() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 4));
+    let moves = get_moves(&board, 4, 4);
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Forced(position) => assert_eq!(position, &Position(2, 2)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Forced(position) => assert_eq!(position, &Position(2, 6)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -198,15 +198,15 @@ fn non_king_black_free_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 2));
+    let moves = get_moves(&board, 4, 2);
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 1)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -224,11 +224,11 @@ fn non_king_black_free_movement_blocked_by_friendly() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(2, 4));
+    let moves = get_moves(&board, 2, 4);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 5)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -246,11 +246,11 @@ fn non_king_black_free_movement_blocked_by_left_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 0));
+    let moves = get_moves(&board, 4, 0);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 1)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -268,11 +268,11 @@ fn non_king_black_free_movement_blocked_by_right_wall() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(3, 7));
+    let moves = get_moves(&board, 3, 7);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(4, 6)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&4, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -290,11 +290,11 @@ fn non_king_black_forced_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(3, 3));
+    let moves = get_moves(&board, 3, 3);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(position) => assert_eq!(position, &Position(5, 1)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -312,23 +312,23 @@ fn king_white_free_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 4));
+    let moves = get_moves(&board, 4, 4);
 
     assert_eq!(moves.len(), 4);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 5)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[2] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[3] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 5)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -346,19 +346,19 @@ fn king_white_free_movement_blocked_by_friendly() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 4));
+    let moves = get_moves(&board, 4, 4);
 
     assert_eq!(moves.len(), 3);
     match &moves[0] {
-        Movement::Free(position) => assert_eq!(position, &Position(3, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 3)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[2] {
-        Movement::Free(position) => assert_eq!(position, &Position(5, 5)),
+        Movement::Free(row, col) => assert_eq!((row, col), (&5, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -376,11 +376,11 @@ fn king_white_forced_movement() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 4));
+    let moves = get_moves(&board, 4, 4);
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(position) => assert_eq!(position, &Position(2, 6)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -398,15 +398,15 @@ fn king_white_forced_movement_multiple() {
         "' * ' * ' * ' *",
     ]);
 
-    let moves = get_moves(&board, Position(4, 4));
+    let moves = get_moves(&board, 4, 4);
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Forced(position) => assert_eq!(position, &Position(2, 6)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Forced(position) => assert_eq!(position, &Position(6, 2)),
+        Movement::Forced(row, col) => assert_eq!((row, col), (&6, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
