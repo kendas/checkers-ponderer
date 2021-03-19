@@ -1,11 +1,21 @@
-use std::usize;
+use wasm_bindgen::prelude::*;
 
 use crate::board::{Board, Color, Piece};
 
+#[wasm_bindgen]
 #[derive(Debug)]
-pub enum Movement {
-    Free(usize, usize),
-    Forced(usize, usize),
+pub struct Movement {
+    pub movement_type: MovementType,
+    pub row: usize,
+    pub col: usize,
+}
+
+#[wasm_bindgen]
+#[repr(u8)]
+#[derive(Debug, Clone, Copy)]
+pub enum MovementType {
+    Free,
+    Forced,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -32,14 +42,22 @@ pub fn get_moves(board: &Board, row: usize, col: usize) -> Vec<Movement> {
             for (row_direction, col_direction) in possibilities {
                 if let Some((row, col)) = get_next(row, col, row_direction, col_direction) {
                     match board.get(row, col) {
-                        None => moves.push(Movement::Free(row, col)),
+                        None => moves.push(Movement {
+                            movement_type: MovementType::Free,
+                            row,
+                            col,
+                        }),
                         Some(other_piece) => {
                             if other_piece.color != piece.color {
                                 if let Some((row, col)) =
                                     get_next(row, col, row_direction, col_direction)
                                 {
                                     if board.get(row, col).is_none() {
-                                        moves.push(Movement::Forced(row, col));
+                                        moves.push(Movement {
+                                            movement_type: MovementType::Forced,
+                                            row,
+                                            col,
+                                        });
                                     }
                                 }
                             }
@@ -48,10 +66,13 @@ pub fn get_moves(board: &Board, row: usize, col: usize) -> Vec<Movement> {
                 }
             }
 
-            if moves.iter().any(|m| matches!(m, Movement::Forced(_, _))) {
+            if moves
+                .iter()
+                .any(|m| matches!(m.movement_type, MovementType::Forced))
+            {
                 moves
                     .into_iter()
-                    .filter(|m| matches!(m, Movement::Forced(_, _)))
+                    .filter(|m| matches!(m.movement_type, MovementType::Forced))
                     .collect()
             } else {
                 moves

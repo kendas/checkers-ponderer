@@ -1,3 +1,5 @@
+use rules::MovementType;
+
 use super::*;
 
 #[test]
@@ -204,11 +206,19 @@ fn produces_valid_moves_for_a_starting_board() {
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&4, &0)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&4, &0)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&4, &2)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&4, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
 }

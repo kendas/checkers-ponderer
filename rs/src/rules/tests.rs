@@ -18,11 +18,19 @@ fn non_king_white_free_movement() {
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -44,7 +52,11 @@ fn non_king_white_free_movement_blocked_by_friendly() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -66,7 +78,11 @@ fn non_king_white_free_movement_blocked_by_left_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &1)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -88,7 +104,11 @@ fn non_king_white_free_movement_blocked_by_right_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&2, &6)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -110,7 +130,11 @@ fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -132,7 +156,11 @@ fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&2, &2)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -154,7 +182,11 @@ fn non_king_white_forced_movement() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &4)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &4)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -176,11 +208,19 @@ fn non_king_white_forced_movement_with_possibilities() {
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &2)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -202,11 +242,19 @@ fn non_king_black_free_movement() {
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &1)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -228,7 +276,11 @@ fn non_king_black_free_movement_blocked_by_friendly() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -250,7 +302,11 @@ fn non_king_black_free_movement_blocked_by_left_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &1)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -272,7 +328,11 @@ fn non_king_black_free_movement_blocked_by_right_wall() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&4, &6)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&4, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -294,7 +354,11 @@ fn non_king_black_forced_movement() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&5, &1)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -316,19 +380,35 @@ fn king_white_free_movement() {
 
     assert_eq!(moves.len(), 4);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &5)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[2] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[3] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &5)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -350,15 +430,27 @@ fn king_white_free_movement_blocked_by_friendly() {
 
     assert_eq!(moves.len(), 3);
     match &moves[0] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&3, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&3, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &3)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &3)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[2] {
-        Movement::Free(row, col) => assert_eq!((row, col), (&5, &5)),
+        Movement {
+            movement_type: MovementType::Free,
+            row,
+            col,
+        } => assert_eq!((row, col), (&5, &5)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -380,7 +472,11 @@ fn king_white_forced_movement() {
 
     assert_eq!(moves.len(), 1);
     match &moves[0] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
 }
@@ -402,11 +498,19 @@ fn king_white_forced_movement_multiple() {
 
     assert_eq!(moves.len(), 2);
     match &moves[0] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&2, &6)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&2, &6)),
         other => panic!("Unexpected move {:?}", other),
     }
     match &moves[1] {
-        Movement::Forced(row, col) => assert_eq!((row, col), (&6, &2)),
+        Movement {
+            movement_type: MovementType::Forced,
+            row,
+            col,
+        } => assert_eq!((row, col), (&6, &2)),
         other => panic!("Unexpected move {:?}", other),
     }
 }

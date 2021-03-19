@@ -9,6 +9,7 @@ pub struct Board {
     squares: [[Option<Piece>; 4]; 8],
 }
 
+// #[wasm_bindgen]
 impl Board {
     pub fn new() -> Board {
         let black_piece = Some(Piece {
