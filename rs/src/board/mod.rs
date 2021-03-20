@@ -1,8 +1,9 @@
+use std::convert::TryFrom;
 use std::usize;
 
 use wasm_bindgen::prelude::*;
 
-use crate::rules::{self, Movement};
+use crate::rules::{self, Movement, MovementType};
 
 #[wasm_bindgen]
 pub struct Board {
@@ -43,35 +44,17 @@ impl Board {
     }
 
     pub fn get(&self, row: usize, col: usize) -> Option<GamePiece> {
-        if row >= 8 || row >= 8 {
-            return None;
-        }
-        match (row % 2, col % 2) {
-            (0, 0) => {
-                let inner_col = col / 2;
-                match &self.squares[row][inner_col] {
-                    Some(piece) => Some(GamePiece {
-                        color: piece.color,
-                        is_king: piece.is_king,
-                        row,
-                        col,
-                    }),
-                    _ => None,
-                }
-            }
-            (1, 1) => {
-                let inner_col = (col - 1) / 2;
-                match &self.squares[row][inner_col] {
-                    Some(piece) => Some(GamePiece {
-                        color: piece.color,
-                        is_king: piece.is_king,
-                        row,
-                        col,
-                    }),
-                    _ => None,
-                }
-            }
-            _ => None,
+        match self.get_internal_indexes(row, col) {
+            Some((inner_row, inner_col)) => match &self.squares[inner_row][inner_col] {
+                Some(piece) => Some(GamePiece {
+                    color: piece.color,
+                    is_king: piece.is_king,
+                    row,
+                    col,
+                }),
+                _ => None,
+            },
+            None => None,
         }
     }
 
@@ -89,11 +72,59 @@ impl Board {
         rules::get_moves(&self, row, col)
     }
 
-    pub fn get_movable_pieces(&self, color: Color) -> Vec<GamePiece> {
+    pub fn get_movable_pieces(&self, color: Color) -> Vec<u8> {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
             .filter(|piece| !self.moves_for(piece.row, piece.col).is_empty())
+            .map(|p| {
+                vec![
+                    p.color as u8,
+                    p.is_king as u8,
+                    u8::try_from(p.row).unwrap(),
+                    u8::try_from(p.col).unwrap(),
+                ]
+            })
+            .flatten()
             .collect()
+    }
+
+    pub fn make_move(
+        &mut self,
+        from_row: u8,
+        from_col: u8,
+        to_row: u8,
+        to_col: u8,
+    ) -> Result<(), InvalidMove> {
+        let valid_move = self
+            .moves_for(from_row as usize, from_col as usize)
+            .into_iter()
+            .find(|m| m.row == to_row as usize && m.col == to_col as usize);
+        match valid_move {
+            Some(move_) => {
+                match move_.movement_type {
+                    MovementType::Forced => {
+                        let (row, col) = self
+                            .get_internal_indexes(
+                                ((from_row + to_row) / 2) as usize,
+                                ((from_col + to_col) / 2) as usize,
+                            )
+                            .unwrap();
+                        self.squares[row][col] = None;
+                    }
+                    _ => {}
+                }
+                let (row, col) = self
+                    .get_internal_indexes(from_row as usize, from_col as usize)
+                    .unwrap();
+                let piece = self.squares[row][col].take().unwrap();
+                let (row, col) = self
+                    .get_internal_indexes(to_row as usize, to_col as usize)
+                    .unwrap();
+                self.squares[row][col] = Some(piece);
+                Ok(())
+            }
+            None => Err(InvalidMove),
+        }
     }
 }
 
@@ -124,6 +155,17 @@ impl Board {
             })
             .flatten()
     }
+
+    fn get_internal_indexes(&self, row: usize, col: usize) -> Option<(usize, usize)> {
+        if row >= 8 || row >= 8 {
+            return None;
+        }
+        match (row % 2, col % 2) {
+            (0, 0) => Some((row, col / 2)),
+            (1, 1) => Some((row, (col - 1) / 2)),
+            _ => None,
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -148,6 +190,10 @@ pub enum Color {
     White,
     Black,
 }
+
+#[wasm_bindgen]
+#[derive(Debug)]
+pub struct InvalidMove;
 
 #[cfg(test)]
 mod tests;

@@ -20,4 +20,4 @@ pub fn greet() {
     alert("Hello, checkers-ponderer!");
 }
 
-pub use board::Board;
+pub use board::{Board, Color};

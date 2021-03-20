@@ -245,11 +245,71 @@ fn produces_valid_moves_for_a_starting_board() {
 fn produces_valid_movable_pieces_for_a_staring_board() {
     let board = Board::new();
 
-    let pieces = board.get_movable_pieces(Color::White);
+    let raw = board.get_movable_pieces(Color::White);
+    let pieces: Vec<_> = raw.chunks(4).collect();
 
     assert_eq!(pieces.len(), 4);
-    assert_eq!((pieces[0].row, pieces[0].col), (5, 1));
-    assert_eq!((pieces[1].row, pieces[1].col), (5, 3));
-    assert_eq!((pieces[2].row, pieces[2].col), (5, 5));
-    assert_eq!((pieces[3].row, pieces[3].col), (5, 7));
+    assert_eq!((pieces[0][2], pieces[0][3]), (5, 1));
+    assert_eq!((pieces[1][2], pieces[1][3]), (5, 3));
+    assert_eq!((pieces[2][2], pieces[2][3]), (5, 5));
+    assert_eq!((pieces[3][2], pieces[3][3]), (5, 7));
+}
+
+#[test]
+fn attempting_to_move_empty_square_fails() {
+    let mut board = Board::new();
+
+    let result = board.make_move(4, 0, 3, 1);
+    assert!(result.is_err());
+}
+
+#[test]
+fn attempting_to_move_white_square_fails() {
+    let mut board = Board::new();
+
+    let result = board.make_move(3, 0, 2, 1);
+    assert!(result.is_err());
+}
+
+#[test]
+fn attempting_an_invalid_move_fails() {
+    let mut board = Board::new();
+
+    let result = board.make_move(5, 1, 2, 1);
+    assert!(result.is_err());
+}
+
+#[test]
+fn move_normally() {
+    let mut board = Board::new();
+
+    let result = board.make_move(5, 1, 4, 0);
+    assert!(result.is_ok());
+
+    assert!(board.get(5, 1).is_none());
+    assert!(board.get(4, 0).is_some());
+    assert_eq!(board.count_pieces(Color::White), 12);
+    assert_eq!(board.count_pieces(Color::Black), 12);
+}
+
+#[test]
+fn move_by_taking() {
+    let mut board = Board::new();
+    board.squares[5][0] = None;
+    board.squares[4][0] = Some(Piece { color: Color::White, is_king: false });
+    board.squares[2][1] = None;
+    board.squares[3][0] = Some(Piece { color: Color::Black, is_king: false });
+
+    assert!(board.get(2, 2).is_none());
+    assert!(board.get(3, 1).is_some());
+    assert!(board.get(4, 0).is_some());
+
+    let result = board.make_move(4, 0, 2, 2);
+    assert!(result.is_ok());
+
+    assert!(board.get(2, 2).is_some());
+    assert!(board.get(3, 1).is_none());
+    assert!(board.get(4, 0).is_none());
+    assert_eq!(board.count_pieces(Color::White), 12);
+    assert_eq!(board.count_pieces(Color::Black), 11);
 }
