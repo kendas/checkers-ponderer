@@ -1,17 +1,18 @@
 use std::convert::TryFrom;
 use std::usize;
 
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{convert::FromWasmAbi, prelude::*};
 
-use crate::rules::{self, Movement, MovementType};
+use crate::rules::{self, MovementType};
 
 #[wasm_bindgen]
 pub struct Board {
     squares: [[Option<Piece>; 4]; 8],
 }
 
-// #[wasm_bindgen]
+#[wasm_bindgen]
 impl Board {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Board {
         let black_piece = Some(Piece {
             color: Color::Black,
@@ -60,14 +61,7 @@ impl Board {
 
     pub fn all_pieces(&self) -> Vec<u8> {
         self.get_normalized_pieces()
-            .map(|p| {
-                vec![
-                    p.color as u8,
-                    p.is_king as u8,
-                    u8::try_from(p.row).unwrap(),
-                    u8::try_from(p.col).unwrap(),
-                ]
-            })
+            .map(|p| p.into_vec())
             .flatten()
             .collect()
     }
@@ -75,34 +69,24 @@ impl Board {
     pub fn pieces(&self, color: Color) -> Vec<u8> {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
-            .map(|p| {
-                vec![
-                    p.color as u8,
-                    p.is_king as u8,
-                    u8::try_from(p.row).unwrap(),
-                    u8::try_from(p.col).unwrap(),
-                ]
-            })
+            .map(|p| p.into_vec())
             .flatten()
             .collect()
     }
 
-    pub fn moves_for(&self, row: usize, col: usize) -> Vec<Movement> {
+    pub fn moves_for(&self, row: usize, col: usize) -> Vec<u8> {
         rules::get_moves(&self, row, col)
+            .into_iter()
+            .map(|m| m.into_vec())
+            .flatten()
+            .collect()
     }
 
     pub fn get_movable_pieces(&self, color: Color) -> Vec<u8> {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
             .filter(|piece| !self.moves_for(piece.row, piece.col).is_empty())
-            .map(|p| {
-                vec![
-                    p.color as u8,
-                    p.is_king as u8,
-                    u8::try_from(p.row).unwrap(),
-                    u8::try_from(p.col).unwrap(),
-                ]
-            })
+            .map(|p| p.into_vec())
             .flatten()
             .collect()
     }
@@ -113,9 +97,8 @@ impl Board {
         from_col: u8,
         to_row: u8,
         to_col: u8,
-    ) -> Result<(), InvalidMove> {
-        let valid_move = self
-            .moves_for(from_row as usize, from_col as usize)
+    ) -> Result<(), JsValue> {
+        let valid_move = rules::get_moves(&self, from_row as usize, from_col as usize)
             .into_iter()
             .find(|m| m.row == to_row as usize && m.col == to_col as usize);
         match valid_move {
@@ -135,7 +118,7 @@ impl Board {
                 self.squares[to_row as usize][col] = Some(piece);
                 Ok(())
             }
-            None => Err(InvalidMove),
+            None => Err(JsValue::from_str("Invalid move")),
         }
     }
 }
@@ -183,6 +166,7 @@ fn get_internal_col(row: usize, col: usize) -> Option<usize> {
 fn get_external_col(row: usize, col: usize) -> usize {
     col * 2 + (row + 1) % 2
 }
+
 #[wasm_bindgen]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct GamePiece {
@@ -190,6 +174,23 @@ pub struct GamePiece {
     pub is_king: bool,
     pub row: usize,
     pub col: usize,
+}
+
+impl GamePiece {
+    fn into_vec(self) -> Vec<u8> {
+        self.into()
+    }
+}
+
+impl Into<Vec<u8>> for GamePiece {
+    fn into(self) -> Vec<u8> {
+        vec![
+            self.color as u8,
+            self.is_king as u8,
+            u8::try_from(self.row).unwrap(),
+            u8::try_from(self.col).unwrap(),
+        ]
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -205,10 +206,6 @@ pub enum Color {
     White,
     Black,
 }
-
-#[wasm_bindgen]
-#[derive(Debug)]
-pub struct InvalidMove;
 
 #[cfg(test)]
 mod tests;

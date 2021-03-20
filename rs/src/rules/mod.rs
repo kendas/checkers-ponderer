@@ -1,3 +1,5 @@
+use std::convert::TryFrom;
+
 use wasm_bindgen::prelude::*;
 
 use crate::board::{Board, Color, GamePiece};
@@ -8,6 +10,22 @@ pub struct Movement {
     pub movement_type: MovementType,
     pub row: usize,
     pub col: usize,
+}
+
+impl Movement {
+    pub(super) fn into_vec(self) -> Vec<u8> {
+        self.into()
+    }
+}
+
+impl Into<Vec<u8>> for Movement {
+    fn into(self) -> Vec<u8> {
+        vec![
+            self.movement_type as u8,
+            u8::try_from(self.row).unwrap(),
+            u8::try_from(self.col).unwrap(),
+        ]
+    }
 }
 
 #[wasm_bindgen]

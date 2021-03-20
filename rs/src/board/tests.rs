@@ -206,24 +206,17 @@ fn produces_valid_moves_for_a_starting_board() {
     let board = Board::new();
 
     let moves = board.moves_for(5, 2);
+    let moves: Vec<_> = moves.chunks(3).collect();
 
     assert_eq!(moves.len(), 2);
-    match &moves[0] {
-        Movement {
-            movement_type: MovementType::Free,
-            row,
-            col,
-        } => assert_eq!((row, col), (&4, &1)),
-        other => panic!("Unexpected move {:?}", other),
-    }
-    match &moves[1] {
-        Movement {
-            movement_type: MovementType::Free,
-            row,
-            col,
-        } => assert_eq!((row, col), (&4, &3)),
-        other => panic!("Unexpected move {:?}", other),
-    }
+    assert_eq!(
+        (moves[0][0], moves[0][1], moves[0][2]),
+        (MovementType::Free as u8, 4, 1)
+    );
+    assert_eq!(
+        (moves[1][0], moves[1][1], moves[1][2]),
+        (MovementType::Free as u8, 4, 3)
+    );
 }
 
 #[test]
