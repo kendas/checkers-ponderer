@@ -234,6 +234,19 @@ fn produces_valid_movable_pieces_for_a_staring_board() {
 }
 
 #[test]
+fn produces_only_forced_movable_pieces_if_some_are_available() {
+    let mut board = Board::new();
+    board.make_move(5, 0, 4, 1).unwrap();
+    board.make_move(2, 3, 3, 2).unwrap();
+
+    let raw = board.get_movable_pieces(Color::White);
+    let pieces: Vec<_> = raw.chunks(4).collect();
+
+    assert_eq!(pieces.len(), 1);
+    assert_eq!((pieces[0][2], pieces[0][3]), (4, 1));
+}
+
+#[test]
 fn attempting_to_move_empty_square_fails() {
     let mut board = Board::new();
 

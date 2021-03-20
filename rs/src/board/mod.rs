@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use std::usize;
 
-use wasm_bindgen::{convert::FromWasmAbi, prelude::*};
+use wasm_bindgen::prelude::*;
 
 use crate::rules::{self, MovementType};
 
@@ -83,10 +83,15 @@ impl Board {
     }
 
     pub fn get_movable_pieces(&self, color: Color) -> Vec<u8> {
-        self.get_normalized_pieces()
+        let (forced, free): (Vec<_>, Vec<_>) = self
+            .get_normalized_pieces()
             .filter(move |piece| piece.color == color)
-            .filter(|piece| !self.moves_for(piece.row, piece.col).is_empty())
-            .map(|p| p.into_vec())
+            .map(|piece| (piece, rules::get_moves(&self, piece.row, piece.col)))
+            .filter(|(_, movements)| !movements.is_empty())
+            .partition(|(_, m)| rules::has_forced_moves(m));
+        if !forced.is_empty() { forced } else { free }
+            .into_iter()
+            .map(|(p, _)| p.into_vec())
             .flatten()
             .collect()
     }

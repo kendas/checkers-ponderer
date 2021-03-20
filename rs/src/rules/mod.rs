@@ -30,7 +30,7 @@ impl Into<Vec<u8>> for Movement {
 
 #[wasm_bindgen]
 #[repr(u8)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MovementType {
     Free,
     Forced,
@@ -57,10 +57,7 @@ pub fn get_moves(board: &Board, row: usize, col: usize) -> Vec<Movement> {
             let possibilities = get_possibilities(&piece);
             let moves = get_moves_from_possibilities(&board, &piece, possibilities);
 
-            if moves
-                .iter()
-                .any(|m| matches!(m.movement_type, MovementType::Forced))
-            {
+            if has_forced_moves(&moves) {
                 moves
                     .into_iter()
                     .filter(|m| matches!(m.movement_type, MovementType::Forced))
@@ -71,6 +68,12 @@ pub fn get_moves(board: &Board, row: usize, col: usize) -> Vec<Movement> {
         }
         None => Default::default(),
     }
+}
+
+pub(crate) fn has_forced_moves(movements: &Vec<Movement>) -> bool {
+    movements
+        .iter()
+        .any(|m| matches!(m.movement_type, MovementType::Forced))
 }
 
 fn get_next(
