@@ -44,8 +44,8 @@ impl Board {
     }
 
     pub fn get(&self, row: usize, col: usize) -> Option<GamePiece> {
-        match self.get_internal_indexes(row, col) {
-            Some((inner_row, inner_col)) => match &self.squares[inner_row][inner_col] {
+        match get_internal_col(row, col) {
+            Some(inner_col) => match &self.squares[row][inner_col] {
                 Some(piece) => Some(GamePiece {
                     color: piece.color,
                     is_king: piece.is_king,
@@ -103,24 +103,17 @@ impl Board {
             Some(move_) => {
                 match move_.movement_type {
                     MovementType::Forced => {
-                        let (row, col) = self
-                            .get_internal_indexes(
-                                ((from_row + to_row) / 2) as usize,
-                                ((from_col + to_col) / 2) as usize,
-                            )
-                            .unwrap();
+                        let row = ((from_row + to_row) / 2) as usize;
+                        let col =
+                            get_internal_col(row, ((from_col + to_col) / 2) as usize).unwrap();
                         self.squares[row][col] = None;
                     }
                     _ => {}
                 }
-                let (row, col) = self
-                    .get_internal_indexes(from_row as usize, from_col as usize)
-                    .unwrap();
-                let piece = self.squares[row][col].take().unwrap();
-                let (row, col) = self
-                    .get_internal_indexes(to_row as usize, to_col as usize)
-                    .unwrap();
-                self.squares[row][col] = Some(piece);
+                let col = get_internal_col(from_row as usize, from_col as usize).unwrap();
+                let piece = self.squares[from_row as usize][col].take().unwrap();
+                let col = get_internal_col(to_row as usize, to_col as usize).unwrap();
+                self.squares[to_row as usize][col] = Some(piece);
                 Ok(())
             }
             None => Err(InvalidMove),
@@ -149,25 +142,28 @@ impl Board {
                             color: piece.color,
                             is_king: piece.is_king,
                             row,
-                            col: col * 2 + row % 2,
+                            col: get_external_col(row, col),
                         }
                     })
             })
             .flatten()
     }
+}
 
-    fn get_internal_indexes(&self, row: usize, col: usize) -> Option<(usize, usize)> {
-        if row >= 8 || row >= 8 {
-            return None;
-        }
-        match (row % 2, col % 2) {
-            (0, 0) => Some((row, col / 2)),
-            (1, 1) => Some((row, (col - 1) / 2)),
-            _ => None,
-        }
+fn get_internal_col(row: usize, col: usize) -> Option<usize> {
+    if row >= 8 || row >= 8 {
+        return None;
+    }
+    match (row % 2, col % 2) {
+        (1, 0) => Some(col / 2),
+        (0, 1) => Some((col - 1) / 2),
+        _ => None,
     }
 }
 
+fn get_external_col(row: usize, col: usize) -> usize {
+    col * 2 + (row + 1) % 2
+}
 #[wasm_bindgen]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct GamePiece {
