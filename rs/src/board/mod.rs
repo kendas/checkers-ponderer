@@ -58,13 +58,32 @@ impl Board {
         }
     }
 
-    pub fn all_pieces(&self) -> Vec<GamePiece> {
-        self.get_normalized_pieces().collect()
+    pub fn all_pieces(&self) -> Vec<u8> {
+        self.get_normalized_pieces()
+            .map(|p| {
+                vec![
+                    p.color as u8,
+                    p.is_king as u8,
+                    u8::try_from(p.row).unwrap(),
+                    u8::try_from(p.col).unwrap(),
+                ]
+            })
+            .flatten()
+            .collect()
     }
 
-    pub fn pieces(&self, color: Color) -> Vec<GamePiece> {
+    pub fn pieces(&self, color: Color) -> Vec<u8> {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
+            .map(|p| {
+                vec![
+                    p.color as u8,
+                    p.is_king as u8,
+                    u8::try_from(p.row).unwrap(),
+                    u8::try_from(p.col).unwrap(),
+                ]
+            })
+            .flatten()
             .collect()
     }
 

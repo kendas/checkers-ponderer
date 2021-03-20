@@ -107,7 +107,7 @@ fn allows_iterating_over_pieces() {
         color: Color::White,
         is_king: false,
     };
-    let expected: Vec<(Piece, (usize, usize))> = vec![
+    let expected: Vec<(Piece, (u8, u8))> = vec![
         (black_piece, (0, 1)),
         (black_piece, (0, 3)),
         (black_piece, (0, 5)),
@@ -134,15 +134,10 @@ fn allows_iterating_over_pieces() {
         (white_piece, (7, 6)), // 1st white row
     ];
 
-    for (expected, actual) in board.all_pieces().into_iter().zip(expected) {
-        assert_eq!(
-            Piece {
-                color: expected.color,
-                is_king: expected.is_king
-            },
-            actual.0
-        );
-        assert_eq!((expected.row, expected.col), actual.1);
+    for (actual, expected) in board.all_pieces().chunks(4).zip(expected) {
+        assert_eq!(actual[0], expected.0.color as u8);
+        assert_eq!(actual[1], expected.0.is_king as u8);
+        assert_eq!((actual[2], actual[3]), expected.1);
     }
 }
 
@@ -154,7 +149,7 @@ fn allows_iterating_over_white_pieces() {
         color: Color::White,
         is_king: false,
     };
-    let expected: Vec<(Piece, (usize, usize))> = vec![
+    let expected: Vec<(Piece, (u8, u8))> = vec![
         (white_piece, (5, 0)),
         (white_piece, (5, 2)),
         (white_piece, (5, 4)),
@@ -169,15 +164,10 @@ fn allows_iterating_over_white_pieces() {
         (white_piece, (7, 6)), // 1st white row
     ];
 
-    for (expected, actual) in board.pieces(Color::White).into_iter().zip(expected) {
-        assert_eq!(
-            Piece {
-                color: expected.color,
-                is_king: expected.is_king
-            },
-            actual.0
-        );
-        assert_eq!((expected.row, expected.col), actual.1);
+    for (actual, expected) in board.pieces(Color::White).chunks(4).zip(expected) {
+        assert_eq!(actual[0], expected.0.color as u8);
+        assert_eq!(actual[1], expected.0.is_king as u8);
+        assert_eq!((actual[2], actual[3]), expected.1);
     }
 }
 
@@ -189,7 +179,7 @@ fn allows_iterating_over_black_pieces() {
         color: Color::Black,
         is_king: false,
     };
-    let expected: Vec<(Piece, (usize, usize))> = vec![
+    let expected: Vec<(Piece, (u8, u8))> = vec![
         (black_piece, (0, 1)),
         (black_piece, (0, 3)),
         (black_piece, (0, 5)),
@@ -204,15 +194,10 @@ fn allows_iterating_over_black_pieces() {
         (black_piece, (2, 7)), // 3rd black row
     ];
 
-    for (expected, actual) in board.pieces(Color::Black).into_iter().zip(expected) {
-        assert_eq!(
-            Piece {
-                color: expected.color,
-                is_king: expected.is_king
-            },
-            actual.0
-        );
-        assert_eq!((expected.row, expected.col), actual.1);
+    for (actual, expected) in board.pieces(Color::Black).chunks(4).zip(expected) {
+        assert_eq!(actual[0], expected.0.color as u8);
+        assert_eq!(actual[1], expected.0.is_king as u8);
+        assert_eq!((actual[2], actual[3]), expected.1);
     }
 }
 
@@ -296,9 +281,15 @@ fn move_normally() {
 fn move_by_taking() {
     let mut board = Board::new();
     board.squares[5][0] = None;
-    board.squares[4][0] = Some(Piece { color: Color::White, is_king: false });
+    board.squares[4][0] = Some(Piece {
+        color: Color::White,
+        is_king: false,
+    });
     board.squares[2][1] = None;
-    board.squares[3][1] = Some(Piece { color: Color::Black, is_king: false });
+    board.squares[3][1] = Some(Piece {
+        color: Color::Black,
+        is_king: false,
+    });
 
     assert!(board.get(5, 0).is_none());
     assert!(board.get(4, 1).is_some());
