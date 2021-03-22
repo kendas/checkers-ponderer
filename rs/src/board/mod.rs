@@ -122,8 +122,8 @@ impl Board {
                 let row = to_row as usize;
                 let col = get_internal_col(row, to_col as usize).unwrap();
                 match piece.color {
-                    Color::White => piece.is_king = row == 0,
-                    Color::Black => piece.is_king = row == 7
+                    Color::White => piece.is_king |= row == 0,
+                    Color::Black => piece.is_king |= row == 7
                 }
                 self.squares[row][col] = Some(piece);
                 Ok(())

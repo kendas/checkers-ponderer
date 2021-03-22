@@ -314,8 +314,14 @@ fn move_by_taking() {
 
 #[test]
 fn moving_to_last_row_makes_king() {
-    let white_piece = Some(Piece{color: Color::White, is_king: false});
-    let black_piece = Some(Piece{color: Color::Black, is_king: false});
+    let white_piece = Some(Piece {
+        color: Color::White,
+        is_king: false,
+    });
+    let black_piece = Some(Piece {
+        color: Color::Black,
+        is_king: false,
+    });
     let mut board = Board {
         squares: [
             [None; 4],
@@ -326,7 +332,7 @@ fn moving_to_last_row_makes_king() {
             [black_piece, None, None, None],
             [None; 4],
             [None; 4],
-        ]
+        ],
     };
 
     assert!(board.get(0, 1).is_none());
@@ -339,7 +345,45 @@ fn moving_to_last_row_makes_king() {
     assert!(board.get(1, 0).is_none());
     assert_eq!(board.count_pieces(Color::White), 1);
     assert_eq!(board.count_pieces(Color::Black), 1);
-    
+
     let piece = board.get(0, 1).unwrap();
+    assert!(piece.is_king);
+}
+
+#[test]
+fn moving_from_last_row_remains_king() {
+    let white_piece = Some(Piece {
+        color: Color::White,
+        is_king: true,
+    });
+    let black_piece = Some(Piece {
+        color: Color::Black,
+        is_king: false,
+    });
+    let mut board = Board {
+        squares: [
+            [white_piece, None, None, None],
+            [None; 4],
+            [None; 4],
+            [None; 4],
+            [None; 4],
+            [black_piece, None, None, None],
+            [None; 4],
+            [None; 4],
+        ],
+    };
+
+    assert!(board.get(0, 1).is_some());
+    assert!(board.get(1, 0).is_none());
+
+    let result = board.make_move(0, 1, 1, 0);
+    assert!(result.is_ok());
+
+    assert!(board.get(0, 1).is_none());
+    assert!(board.get(1, 0).is_some());
+    assert_eq!(board.count_pieces(Color::White), 1);
+    assert_eq!(board.count_pieces(Color::Black), 1);
+
+    let piece = board.get(1, 0).unwrap();
     assert!(piece.is_king);
 }
