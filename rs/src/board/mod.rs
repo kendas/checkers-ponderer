@@ -118,9 +118,14 @@ impl Board {
                     _ => {}
                 }
                 let col = get_internal_col(from_row as usize, from_col as usize).unwrap();
-                let piece = self.squares[from_row as usize][col].take().unwrap();
-                let col = get_internal_col(to_row as usize, to_col as usize).unwrap();
-                self.squares[to_row as usize][col] = Some(piece);
+                let mut piece = self.squares[from_row as usize][col].take().unwrap();
+                let row = to_row as usize;
+                let col = get_internal_col(row, to_col as usize).unwrap();
+                match piece.color {
+                    Color::White => piece.is_king = row == 0,
+                    Color::Black => piece.is_king = row == 7
+                }
+                self.squares[row][col] = Some(piece);
                 Ok(())
             }
             None => Err(JsValue::from_str("Invalid move")),
