@@ -5,19 +5,19 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
-import { PlayerColor } from "@/interfaces";
+import { Color } from "engine";
 
 export default Vue.extend({
   props: {
-    color: { type: Number as PropType<PlayerColor>, required: true },
+    color: { type: Number as PropType<Color>, required: true },
     isKing: { type: Boolean, required: true },
   },
   computed: {
     classes(): { king: boolean; white: boolean; black: boolean } {
       return {
         king: this.isKing,
-        white: this.color === PlayerColor.white,
-        black: this.color === PlayerColor.black,
+        white: this.color === Color.White,
+        black: this.color === Color.Black,
       };
     },
   },

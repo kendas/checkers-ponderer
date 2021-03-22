@@ -1,21 +1,23 @@
 <template>
   <div id="app">
-    <checkers-board />
+    <checkers-board :game-board="gameBoard" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import CheckersBoard from "./components/CheckersBoard.vue";
-// import * as engine from 'engine';
+import { Board } from 'engine';
 
 export default Vue.extend({
   name: "App",
   components: {
     CheckersBoard
   },
-  created() {
-    // engine.greet()
+  data() {
+    return {
+      gameBoard: new Board()
+    }
   }
 });
 </script>

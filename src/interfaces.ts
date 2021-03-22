@@ -1,11 +1,10 @@
-export enum PlayerColor {
-  white,
-  black,
-}
+import { Color, MovementType } from 'engine';
 
 export interface Piece {
-  color: PlayerColor;
+  color: Color;
   isKing: boolean;
+  row: number;
+  col: number;
 }
 
 export interface PiecePosition {
@@ -15,6 +14,16 @@ export interface PiecePosition {
 
 export interface BoardSquare {
   isWhite: boolean;
-  piece?: Piece;
   isHighlighted: boolean;
+}
+
+export interface Movement {
+  type: MovementType;
+  row: number;
+  col: number;
+}
+
+export interface Position {
+  row: number;
+  col: number;
 }

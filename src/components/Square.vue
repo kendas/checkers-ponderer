@@ -1,16 +1,24 @@
 <template>
-  <div :class="{ white: isWhite, black: !isWhite, selected: isSelected }">
+  <div
+    :class="{
+      white: isWhite,
+      black: !isWhite,
+      selected: isSelected,
+      highlighted: isHighlighted,
+    }"
+  >
     <slot />
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import Vue from "vue";
 
 export default Vue.extend({
   props: {
     isWhite: { type: Boolean, required: true },
     isSelected: { type: Boolean },
+    isHighlighted: { type: Boolean },
   },
   methods: {},
 });
@@ -27,5 +35,9 @@ export default Vue.extend({
 
 .selected {
   background-color: #00ffff;
+}
+
+.highlighted {
+  background-color: #00ff88;
 }
 </style>

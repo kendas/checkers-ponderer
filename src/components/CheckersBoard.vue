@@ -8,12 +8,13 @@
         class="square"
         :is-white="square.isWhite"
         :is-selected="isSelected(row, col)"
+        :is-highlighted="canMove(row, col) || isPossibleMovement(row, col)"
         @click.native="onSquareClick(row, col)"
       >
         <board-piece
-          v-if="square.piece !== undefined"
-          :color="square.piece.color"
-          :is-king="square.piece.isKing"
+          v-if="pieces.some((p) => p.row === row && p.col === col)"
+          :color="pieces.find((p) => p.row === row && p.col === col).color"
+          :is-king="pieces.find((p) => p.row === row && p.col === col).isKing"
         />
       </square>
     </template>
@@ -25,46 +26,108 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
+
+import { Board, Color } from "engine";
 
 import Square from "@/components/Square.vue";
 import BoardPiece from "@/components/BoardPiece.vue";
 import { generateStartingBoard } from "@/utils/board";
-import { BoardSquare } from "@/interfaces";
+import { chunks } from "@/utils/array";
+import { BoardSquare, Piece, Position } from "@/interfaces";
 
 interface ComponentData {
   rows: ["8", "7", "6", "5", "4", "3", "2", "1"];
   cols: ["A", "B", "C", "D", "E", "F", "G", "H"];
   board: BoardSquare[][];
-  selectedSquare: [number, number] | null;
+  selectedSquare: Position | null;
+  turn: Color;
 }
 
 export default Vue.extend({
   components: { Square, BoardPiece },
+  props: {
+    gameBoard: { type: Object as PropType<Board>, required: true },
+  },
   data(): ComponentData {
     return {
       rows: ["8", "7", "6", "5", "4", "3", "2", "1"],
       cols: ["A", "B", "C", "D", "E", "F", "G", "H"],
       board: generateStartingBoard(),
       selectedSquare: null,
+      turn: Color.White,
     };
   },
-  computed: {},
+  computed: {
+    pieces(): Piece[] {
+      this.turn; // referencing this forces us to reevaluate when a turn is taken
+      const result = [];
+      for (const [color, isKing, row, col] of chunks(
+        this.gameBoard.all_pieces(),
+        4
+      )) {
+        result.push({ color: color as Color, isKing: !!isKing, row, col });
+      }
+      return result;
+    },
+    possibleMoves(): Position[] {
+      if (this.selectedSquare !== null) {
+        const { row, col } = this.selectedSquare;
+        return chunks(this.gameBoard.moves_for(row, col), 3).map(
+          ([type, row, col]) => {
+            return { row, col };
+          }
+        );
+      }
+      return [];
+    },
+    movablePieces(): Position[] {
+      if (this.selectedSquare === null) {
+        return chunks(this.gameBoard.get_movable_pieces(this.turn), 4).map(
+          ([color, isKing, row, col]) => {
+            return { row, col };
+          }
+        );
+      }
+      return [];
+    },
+  },
   methods: {
     onSquareClick(row: number, col: number) {
-      if (
-        this.board[row][col].piece !== undefined &&
-        !this.isSelected(row, col)
-      ) {
-        this.selectedSquare = [row, col];
+      if (this.selectedSquare === null) {
+        if (this.canMove(row, col)) {
+          this.selectedSquare = { row, col };
+        }
       } else {
+        if (this.isPossibleMovement(row, col)) {
+          this.gameBoard.make_move(
+            this.selectedSquare.row,
+            this.selectedSquare.col,
+            row,
+            col
+          );
+          if (this.turn === Color.White) {
+            this.turn = Color.Black;
+          } else {
+            this.turn = Color.White;
+          }
+        }
         this.selectedSquare = null;
       }
     },
     isSelected(row: number, col: number): boolean {
       return (
-        this.selectedSquare?.[0] === row && this.selectedSquare?.[1] == col
+        this.selectedSquare?.row === row && this.selectedSquare?.col === col
       );
+    },
+    hasPiece(row: number, col: number): boolean {
+      return this.pieces.some((p) => p.row === row && p.col === col);
+    },
+    canMove(row: number, col: number): boolean {
+      return this.movablePieces.some((p) => p.row === row && p.col === col);
+    },
+    isPossibleMovement(row: number, col: number): boolean {
+      return this.possibleMoves.some((p) => p.row === row && p.col === col);
     },
   },
 });
