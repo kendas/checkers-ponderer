@@ -1,5 +1,7 @@
 <template>
-  <div :class="classes" />
+  <div :class="classes">
+    <i v-if="isKing" class="far fa-star"></i>
+  </div>
 </template>
 
 <script lang="ts">
@@ -32,6 +34,12 @@ div {
   display: inline-block;
   margin-right: 1px;
   margin-bottom: 1px;
+  text-align: center;
+}
+
+i {
+  font-size: 2.5em;
+  margin-top: 0.25em;
 }
 
 .white {
@@ -39,8 +47,16 @@ div {
   border: 1px solid black;
 }
 
+.white > i {
+  color: black;
+}
+
 .black {
   background: black;
   border: 1px solid white;
+}
+
+.black > i {
+  color: white;
 }
 </style>
