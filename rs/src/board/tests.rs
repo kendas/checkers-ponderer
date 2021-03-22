@@ -1,8 +1,9 @@
-use rules::MovementType;
+use wasm_bindgen_test::*;
 
+use rules::MovementType;
 use super::*;
 
-#[test]
+#[wasm_bindgen_test]
 fn constructs_a_starting_board_with_12_pieces() {
     let board = Board::new();
 
@@ -52,7 +53,7 @@ fn constructs_a_starting_board_with_12_pieces() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn returns_none_for_white_squares() {
     let board = Board::new();
 
@@ -95,7 +96,7 @@ fn returns_none_for_white_squares() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn allows_iterating_over_pieces() {
     let board = Board::new();
 
@@ -141,7 +142,7 @@ fn allows_iterating_over_pieces() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn allows_iterating_over_white_pieces() {
     let board = Board::new();
 
@@ -171,7 +172,7 @@ fn allows_iterating_over_white_pieces() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn allows_iterating_over_black_pieces() {
     let board = Board::new();
 
@@ -201,7 +202,7 @@ fn allows_iterating_over_black_pieces() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn produces_valid_moves_for_a_starting_board() {
     let board = Board::new();
 
@@ -219,7 +220,7 @@ fn produces_valid_moves_for_a_starting_board() {
     );
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn produces_valid_movable_pieces_for_a_staring_board() {
     let board = Board::new();
 
@@ -233,7 +234,7 @@ fn produces_valid_movable_pieces_for_a_staring_board() {
     assert_eq!((pieces[3][2], pieces[3][3]), (5, 6));
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn produces_only_forced_movable_pieces_if_some_are_available() {
     let mut board = Board::new();
     board.make_move(5, 0, 4, 1).unwrap();
@@ -246,7 +247,7 @@ fn produces_only_forced_movable_pieces_if_some_are_available() {
     assert_eq!((pieces[0][2], pieces[0][3]), (4, 1));
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn attempting_to_move_empty_square_fails() {
     let mut board = Board::new();
 
@@ -254,7 +255,7 @@ fn attempting_to_move_empty_square_fails() {
     assert!(result.is_err());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn attempting_to_move_white_square_fails() {
     let mut board = Board::new();
 
@@ -262,7 +263,7 @@ fn attempting_to_move_white_square_fails() {
     assert!(result.is_err());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn attempting_an_invalid_move_fails() {
     let mut board = Board::new();
 
@@ -270,7 +271,7 @@ fn attempting_an_invalid_move_fails() {
     assert!(result.is_err());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn move_normally() {
     let mut board = Board::new();
 
@@ -283,7 +284,7 @@ fn move_normally() {
     assert_eq!(board.count_pieces(Color::Black), 12);
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn move_by_taking() {
     let mut board = Board::new();
     board.squares[5][0] = None;
@@ -312,7 +313,7 @@ fn move_by_taking() {
     assert_eq!(board.count_pieces(Color::Black), 11);
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn moving_to_last_row_makes_king() {
     let white_piece = Some(Piece {
         color: Color::White,
@@ -350,7 +351,7 @@ fn moving_to_last_row_makes_king() {
     assert!(piece.is_king);
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn moving_from_last_row_remains_king() {
     let white_piece = Some(Piece {
         color: Color::White,

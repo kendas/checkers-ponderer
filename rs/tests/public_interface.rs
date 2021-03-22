@@ -1,6 +1,8 @@
+use wasm_bindgen_test::*;
+
 use checkers_ponderer::{Board, Color};
 
-#[test]
+#[wasm_bindgen_test]
 fn get_initial_moves() {
     let board = Board::new();
 
@@ -20,7 +22,7 @@ fn get_initial_moves() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn make_the_first_move() {
     let mut board = Board::new();
 
@@ -37,7 +39,7 @@ fn make_the_first_move() {
     assert!(board.get(4, 1).is_some());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn make_the_second_move() {
     let mut board = Board::new();
     board.make_move(5, 2, 4, 1).unwrap();
@@ -53,7 +55,7 @@ fn make_the_second_move() {
     assert!(board.get(4, 1).is_some());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn take_a_piece() {
     let mut board = Board::new();
     board.make_move(5, 2, 4, 1).unwrap();
@@ -72,7 +74,7 @@ fn take_a_piece() {
     assert!(board.get(2, 3).is_some());
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn get_pieces() {
     let board = Board::new();
 
@@ -88,7 +90,7 @@ fn get_pieces() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn get_movable_pieces() {
     let board = Board::new();
 

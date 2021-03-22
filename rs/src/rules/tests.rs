@@ -1,7 +1,9 @@
+use wasm_bindgen_test::*;
+
 use super::*;
 use crate::board::{Board, Color, Piece};
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -35,7 +37,7 @@ fn non_king_white_free_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_friendly() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -61,7 +63,7 @@ fn non_king_white_free_movement_blocked_by_friendly() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_left_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -87,7 +89,7 @@ fn non_king_white_free_movement_blocked_by_left_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_right_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -113,7 +115,7 @@ fn non_king_white_free_movement_blocked_by_right_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -139,7 +141,7 @@ fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -165,7 +167,7 @@ fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_forced_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -191,7 +193,7 @@ fn non_king_white_forced_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_white_forced_movement_with_possibilities() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -225,7 +227,7 @@ fn non_king_white_forced_movement_with_possibilities() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_black_free_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -259,7 +261,7 @@ fn non_king_black_free_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_friendly() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -285,7 +287,7 @@ fn non_king_black_free_movement_blocked_by_friendly() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_left_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -311,7 +313,7 @@ fn non_king_black_free_movement_blocked_by_left_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_right_wall() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -337,7 +339,7 @@ fn non_king_black_free_movement_blocked_by_right_wall() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn non_king_black_forced_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -363,7 +365,7 @@ fn non_king_black_forced_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn king_white_free_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -413,7 +415,7 @@ fn king_white_free_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn king_white_free_movement_blocked_by_friendly() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -455,7 +457,7 @@ fn king_white_free_movement_blocked_by_friendly() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn king_white_forced_movement() {
     let board = make_board([
         "' * ' * ' * ' *",
@@ -481,7 +483,7 @@ fn king_white_forced_movement() {
     }
 }
 
-#[test]
+#[wasm_bindgen_test]
 fn king_white_forced_movement_multiple() {
     let board = make_board([
         "' * ' * ' * ' *",
