@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
-import { Board, Color } from "engine";
+import { Board, Color, MovementType } from "engine";
 
 import Square from "@/components/Square.vue";
 import BoardPiece from "@/components/BoardPiece.vue";
@@ -36,12 +36,17 @@ import { generateStartingBoard } from "@/utils/board";
 import { chunks } from "@/utils/array";
 import { BoardSquare, Piece, Position } from "@/interfaces";
 
+interface Move extends Position {
+  type: MovementType;
+}
+
 interface ComponentData {
   rows: ["8", "7", "6", "5", "4", "3", "2", "1"];
   cols: ["A", "B", "C", "D", "E", "F", "G", "H"];
   board: BoardSquare[][];
   selectedSquare: Position | null;
   turn: Color;
+  move_count: number;
 }
 
 export default Vue.extend({
@@ -56,11 +61,12 @@ export default Vue.extend({
       board: generateStartingBoard(),
       selectedSquare: null,
       turn: Color.White,
+      move_count: 0,
     };
   },
   computed: {
     pieces(): Piece[] {
-      this.turn; // referencing this forces us to reevaluate when a turn is taken
+      this.move_count; // referencing this forces us to reevaluate when a turn is taken
       const result = [];
       for (const [color, isKing, row, col] of chunks(
         this.gameBoard.all_pieces(),
@@ -70,12 +76,12 @@ export default Vue.extend({
       }
       return result;
     },
-    possibleMoves(): Position[] {
+    possibleMoves(): Move[] {
       if (this.selectedSquare !== null) {
         const { row, col } = this.selectedSquare;
         return chunks(this.gameBoard.moves_for(row, col), 3).map(
           ([type, row, col]) => {
-            return { row, col };
+            return { type: type as MovementType, row, col };
           }
         );
       }
@@ -100,19 +106,10 @@ export default Vue.extend({
         }
       } else {
         if (this.isPossibleMovement(row, col)) {
-          this.gameBoard.make_move(
-            this.selectedSquare.row,
-            this.selectedSquare.col,
-            row,
-            col
-          );
-          if (this.turn === Color.White) {
-            this.turn = Color.Black;
-          } else {
-            this.turn = Color.White;
-          }
+          this.makeMove(row, col);
+        } else {
+          this.selectedSquare = null;
         }
-        this.selectedSquare = null;
       }
     },
     isSelected(row: number, col: number): boolean {
@@ -128,6 +125,40 @@ export default Vue.extend({
     },
     isPossibleMovement(row: number, col: number): boolean {
       return this.possibleMoves.some((p) => p.row === row && p.col === col);
+    },
+    isForcedMovement(row: number, col: number): boolean {
+      const move = this.possibleMoves.find(
+        (p) => p.row === row && p.col === col
+      )!;
+      return move.type === MovementType.Forced;
+    },
+    makeMove(row: number, col: number) {
+      const shouldRecheck = this.isForcedMovement(row, col);
+      this.gameBoard.make_move(
+        this.selectedSquare!.row,
+        this.selectedSquare!.col,
+        row,
+        col
+      );
+      if (shouldRecheck) {
+        this.selectedSquare = { row, col };
+        if (this.possibleMoves.every((m) => m.type === MovementType.Free)) {
+          this.selectedSquare = null;
+          if (this.turn === Color.White) {
+            this.turn = Color.Black;
+          } else {
+            this.turn = Color.White;
+          }
+        }
+      } else {
+        this.selectedSquare = null;
+        if (this.turn === Color.White) {
+          this.turn = Color.Black;
+        } else {
+          this.turn = Color.White;
+        }
+      }
+      this.move_count += 1;
     },
   },
 });
