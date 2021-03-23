@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 use crate::rules::{self, Movement, MovementType};
 
 pub struct Board {
-    squares: [[Option<Piece>; 4]; 8],
+    pub(crate) squares: [[Option<Piece>; 4]; 8],
 }
 
 impl Board {
@@ -83,35 +83,34 @@ impl Board {
 
     pub fn make_move(
         &self,
-        from_row: u8,
-        from_col: u8,
-        to_row: u8,
-        to_col: u8,
+        from_row: usize,
+        from_col: usize,
+        to_row: usize,
+        to_col: usize,
     ) -> Result<Board, InvalidMove> {
-        let valid_move = rules::get_moves(&self, from_row as usize, from_col as usize)
+        let valid_move = rules::get_moves(&self, from_row, from_col)
             .into_iter()
-            .find(|m| m.row == to_row as usize && m.col == to_col as usize);
+            .find(|m| m.row == to_row && m.col == to_col);
         match valid_move {
             Some(move_) => {
                 let mut squares = self.squares.clone();
                 match move_.movement_type {
                     MovementType::Forced => {
-                        let row = ((from_row + to_row) / 2) as usize;
+                        let row = (from_row + to_row) / 2;
                         let col =
-                            get_internal_col(row, ((from_col + to_col) / 2) as usize).unwrap();
+                            get_internal_col(row, (from_col + to_col) / 2).unwrap();
                         squares[row][col] = None;
                     }
                     _ => {}
                 }
-                let col = get_internal_col(from_row as usize, from_col as usize).unwrap();
-                let mut piece = squares[from_row as usize][col].take().unwrap();
-                let row = to_row as usize;
-                let col = get_internal_col(row, to_col as usize).unwrap();
+                let col = get_internal_col(from_row, from_col).unwrap();
+                let mut piece = squares[from_row][col].take().unwrap();
+                let col = get_internal_col(to_row, to_col).unwrap();
                 match piece.color {
-                    Color::White => piece.is_king |= row == 0,
-                    Color::Black => piece.is_king |= row == 7,
+                    Color::White => piece.is_king |= to_row == 0,
+                    Color::Black => piece.is_king |= to_row == 7,
                 }
-                squares[row][col] = Some(piece);
+                squares[to_row][col] = Some(piece);
                 Ok(Board { squares })
             }
             None => Err(InvalidMove),
@@ -121,10 +120,6 @@ impl Board {
 
 // Not exported
 impl Board {
-    pub(crate) fn from(squares: [[Option<Piece>; 4]; 8]) -> Board {
-        Board { squares }
-    }
-
     fn get_normalized_pieces(&self) -> impl Iterator<Item = GamePiece> + '_ {
         self.squares
             .iter()

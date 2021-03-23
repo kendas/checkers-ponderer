@@ -72,5 +72,5 @@ pub(crate) fn make_board(board: [&str; 8]) -> crate::board::Board {
             }
         }
     }
-    Board::from(squares)
+    Board { squares }
 }

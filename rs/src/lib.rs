@@ -73,7 +73,12 @@ impl Board {
         to_row: u8,
         to_col: u8,
     ) -> Result<(), JsValue> {
-        match self.board.make_move(from_row, from_col, to_row, to_col) {
+        match self.board.make_move(
+            from_row as usize,
+            from_col as usize,
+            to_row as usize,
+            to_col as usize,
+        ) {
             Ok(board) => {
                 self.board = board;
                 Ok(())
