@@ -56,11 +56,11 @@ impl Board {
         }
     }
 
-    pub fn all_pieces(&self) -> impl Iterator<Item = GamePiece> +'_ {
+    pub fn all_pieces(&self) -> impl Iterator<Item = GamePiece> + '_ {
         self.get_normalized_pieces()
     }
 
-    pub fn pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> +'_ {
+    pub fn pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> + '_ {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
     }
@@ -69,7 +69,7 @@ impl Board {
         rules::get_moves(&self, row, col)
     }
 
-    pub fn get_movable_pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> +'_ {
+    pub fn get_movable_pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> + '_ {
         let (forced, free): (Vec<_>, Vec<_>) = self
             .get_normalized_pieces()
             .filter(move |piece| piece.color == color)
@@ -82,36 +82,37 @@ impl Board {
     }
 
     pub fn make_move(
-        &mut self,
+        &self,
         from_row: u8,
         from_col: u8,
         to_row: u8,
         to_col: u8,
-    ) -> Result<(), InvalidMove> {
+    ) -> Result<Board, InvalidMove> {
         let valid_move = rules::get_moves(&self, from_row as usize, from_col as usize)
             .into_iter()
             .find(|m| m.row == to_row as usize && m.col == to_col as usize);
         match valid_move {
             Some(move_) => {
+                let mut squares = self.squares.clone();
                 match move_.movement_type {
                     MovementType::Forced => {
                         let row = ((from_row + to_row) / 2) as usize;
                         let col =
                             get_internal_col(row, ((from_col + to_col) / 2) as usize).unwrap();
-                        self.squares[row][col] = None;
+                        squares[row][col] = None;
                     }
                     _ => {}
                 }
                 let col = get_internal_col(from_row as usize, from_col as usize).unwrap();
-                let mut piece = self.squares[from_row as usize][col].take().unwrap();
+                let mut piece = squares[from_row as usize][col].take().unwrap();
                 let row = to_row as usize;
                 let col = get_internal_col(row, to_col as usize).unwrap();
                 match piece.color {
                     Color::White => piece.is_king |= row == 0,
-                    Color::Black => piece.is_king |= row == 7
+                    Color::Black => piece.is_king |= row == 7,
                 }
-                self.squares[row][col] = Some(piece);
-                Ok(())
+                squares[row][col] = Some(piece);
+                Ok(Board { squares })
             }
             None => Err(InvalidMove),
         }

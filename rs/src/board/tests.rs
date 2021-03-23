@@ -230,9 +230,11 @@ fn produces_valid_movable_pieces_for_a_staring_board() {
 
 #[test]
 fn produces_only_forced_movable_pieces_if_some_are_available() {
-    let mut board = Board::new();
-    board.make_move(5, 0, 4, 1).unwrap();
-    board.make_move(2, 3, 3, 2).unwrap();
+    let board = Board::new()
+        .make_move(5, 0, 4, 1)
+        .unwrap()
+        .make_move(2, 3, 3, 2)
+        .unwrap();
 
     let pieces: Vec<_> = board.get_movable_pieces(Color::White).collect();
 
@@ -242,7 +244,7 @@ fn produces_only_forced_movable_pieces_if_some_are_available() {
 
 #[test]
 fn attempting_to_move_empty_square_fails() {
-    let mut board = Board::new();
+    let board = Board::new();
 
     let result = board.make_move(4, 1, 3, 2);
     assert!(result.is_err());
@@ -250,7 +252,7 @@ fn attempting_to_move_empty_square_fails() {
 
 #[test]
 fn attempting_to_move_white_square_fails() {
-    let mut board = Board::new();
+    let board = Board::new();
 
     let result = board.make_move(3, 1, 2, 2);
     assert!(result.is_err());
@@ -266,10 +268,11 @@ fn attempting_an_invalid_move_fails() {
 
 #[test]
 fn move_normally() {
-    let mut board = Board::new();
+    let board = Board::new();
 
     let result = board.make_move(5, 2, 4, 1);
     assert!(result.is_ok());
+    let board = result.unwrap();
 
     assert!(board.get(5, 2).is_none());
     assert!(board.get(4, 1).is_some());
@@ -298,6 +301,7 @@ fn move_by_taking() {
 
     let result = board.make_move(4, 1, 2, 3);
     assert!(result.is_ok());
+    let board = result.unwrap();
 
     assert!(board.get(2, 3).is_some());
     assert!(board.get(3, 2).is_none());
@@ -308,7 +312,7 @@ fn move_by_taking() {
 
 #[test]
 fn moving_to_last_row_makes_king() {
-    let mut board = utils::make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "w ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -324,6 +328,7 @@ fn moving_to_last_row_makes_king() {
 
     let result = board.make_move(1, 0, 0, 1);
     assert!(result.is_ok());
+    let board = result.unwrap();
 
     assert!(board.get(0, 1).is_some());
     assert!(board.get(1, 0).is_none());
@@ -336,7 +341,7 @@ fn moving_to_last_row_makes_king() {
 
 #[test]
 fn moving_from_last_row_remains_king() {
-    let mut board = utils::make_board([
+    let board = utils::make_board([
         "' W ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -352,6 +357,7 @@ fn moving_from_last_row_remains_king() {
 
     let result = board.make_move(0, 1, 1, 0);
     assert!(result.is_ok());
+    let board = result.unwrap();
 
     assert!(board.get(0, 1).is_none());
     assert!(board.get(1, 0).is_some());

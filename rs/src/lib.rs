@@ -74,8 +74,11 @@ impl Board {
         to_col: u8,
     ) -> Result<(), JsValue> {
         match self.board.make_move(from_row, from_col, to_row, to_col) {
-            Ok(_) => Ok(()),
-            Err(_) => Err(JsValue::from_str("Invalid move"))
+            Ok(board) => {
+                self.board = board;
+                Ok(())
+            }
+            Err(_) => Err(JsValue::from_str("Invalid move")),
         }
     }
 }
