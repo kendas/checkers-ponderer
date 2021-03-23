@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::rules::{self, Movement, MovementType};
 
+#[derive(Clone, Copy)]
 pub struct Board {
     pub(crate) squares: [[Option<Piece>; 4]; 8],
 }

@@ -260,7 +260,7 @@ fn attempting_to_move_white_square_fails() {
 
 #[test]
 fn attempting_an_invalid_move_fails() {
-    let mut board = Board::new();
+    let board = Board::new();
 
     let result = board.make_move(5, 2, 2, 1);
     assert!(result.is_err());

@@ -1,4 +1,5 @@
 mod board;
+mod predictor;
 mod rules;
 mod utils;
 
@@ -84,6 +85,65 @@ impl Board {
                 Ok(())
             }
             Err(_) => Err(JsValue::from_str("Invalid move")),
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub struct Predictor {
+    predictor: crate::predictor::Predictor,
+}
+
+#[wasm_bindgen]
+impl Predictor {
+    #[wasm_bindgen(constructor)]
+    pub fn new(board: Board, depth: u8, color: Color) -> Predictor {
+        Predictor {
+            predictor: predictor::Predictor::new(board.board.clone(), depth, color),
+        }
+    }
+
+    pub fn get_next_move(&mut self) -> Result<Vec<u8>, JsValue> {
+        match self.predictor.get_next_move() {
+            Ok(move_) => Ok(move_.into()),
+            Err(_) => Err(JsValue::from_str("No more moves")),
+        }
+    }
+
+    pub fn register_move(
+        &mut self,
+        own_from_row: u8,
+        own_from_col: u8,
+        own_to_row: u8,
+        own_to_col: u8,
+        oponent_from_row: u8,
+        oponent_from_col: u8,
+        oponent_to_row: u8,
+        oponent_to_col: u8,
+    ) -> Result<(), JsValue> {
+        let own_move = predictor::Move {
+            from: predictor::Position {
+                row: own_from_row as usize,
+                col: own_from_col as usize,
+            },
+            to: predictor::Position {
+                row: own_to_row as usize,
+                col: own_to_col as usize,
+            },
+        };
+        let oponent_move = predictor::Move {
+            from: predictor::Position {
+                row: oponent_from_row as usize,
+                col: oponent_from_col as usize,
+            },
+            to: predictor::Position {
+                row: oponent_to_row as usize,
+                col: oponent_to_col as usize,
+            },
+        };
+        match self.predictor.register_move(own_move, oponent_move) {
+            Ok(_) => Ok(()),
+            Err(_) => Err(JsValue::from_str("Invalid moves supplied"))
         }
     }
 }
