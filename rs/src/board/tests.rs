@@ -1,9 +1,19 @@
-use wasm_bindgen_test::*;
-
-use rules::MovementType;
 use super::*;
+use crate::rules::MovementType;
+use crate::utils;
 
-#[wasm_bindgen_test]
+macro_rules! game_piece(
+    ($color:expr, $king:expr, $row:expr, $col:expr) => (
+        GamePiece {
+            color: $color,
+            is_king: $king,
+            row: $row,
+            col: $col,
+        }
+    )
+);
+
+#[test]
 fn constructs_a_starting_board_with_12_pieces() {
     let board = Board::new();
 
@@ -53,7 +63,7 @@ fn constructs_a_starting_board_with_12_pieces() {
     }
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn returns_none_for_white_squares() {
     let board = Board::new();
 
@@ -96,158 +106,141 @@ fn returns_none_for_white_squares() {
     }
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn allows_iterating_over_pieces() {
     let board = Board::new();
 
-    let black_piece = Piece {
-        color: Color::Black,
-        is_king: false,
-    };
-    let white_piece = Piece {
-        color: Color::White,
-        is_king: false,
-    };
-    let expected: Vec<(Piece, (u8, u8))> = vec![
-        (black_piece, (0, 1)),
-        (black_piece, (0, 3)),
-        (black_piece, (0, 5)),
-        (black_piece, (0, 7)), // 1st black row
-        (black_piece, (1, 0)),
-        (black_piece, (1, 2)),
-        (black_piece, (1, 4)),
-        (black_piece, (1, 6)), // 2nd black row
-        (black_piece, (2, 1)),
-        (black_piece, (2, 3)),
-        (black_piece, (2, 5)),
-        (black_piece, (2, 7)), // 3rd black row
-        (white_piece, (5, 0)),
-        (white_piece, (5, 2)),
-        (white_piece, (5, 4)),
-        (white_piece, (5, 6)), // 3rd white row
-        (white_piece, (6, 1)),
-        (white_piece, (6, 3)),
-        (white_piece, (6, 5)),
-        (white_piece, (6, 7)), // 2nd white row
-        (white_piece, (7, 0)),
-        (white_piece, (7, 2)),
-        (white_piece, (7, 4)),
-        (white_piece, (7, 6)), // 1st white row
+    let expected = vec![
+        game_piece!(Color::Black, false, 0, 1),
+        game_piece!(Color::Black, false, 0, 3),
+        game_piece!(Color::Black, false, 0, 5),
+        game_piece!(Color::Black, false, 0, 7), // 1st black row
+        game_piece!(Color::Black, false, 1, 0),
+        game_piece!(Color::Black, false, 1, 2),
+        game_piece!(Color::Black, false, 1, 4),
+        game_piece!(Color::Black, false, 1, 6), // 2nd black row
+        game_piece!(Color::Black, false, 2, 1),
+        game_piece!(Color::Black, false, 2, 3),
+        game_piece!(Color::Black, false, 2, 5),
+        game_piece!(Color::Black, false, 2, 7), // 3rd black row
+        game_piece!(Color::White, false, 5, 0),
+        game_piece!(Color::White, false, 5, 2),
+        game_piece!(Color::White, false, 5, 4),
+        game_piece!(Color::White, false, 5, 6), // 3rd white row
+        game_piece!(Color::White, false, 6, 1),
+        game_piece!(Color::White, false, 6, 3),
+        game_piece!(Color::White, false, 6, 5),
+        game_piece!(Color::White, false, 6, 7), // 2nd white row
+        game_piece!(Color::White, false, 7, 0),
+        game_piece!(Color::White, false, 7, 2),
+        game_piece!(Color::White, false, 7, 4),
+        game_piece!(Color::White, false, 7, 6), // 1st white row
     ];
 
-    for (actual, expected) in board.all_pieces().chunks(4).zip(expected) {
-        assert_eq!(actual[0], expected.0.color as u8);
-        assert_eq!(actual[1], expected.0.is_king as u8);
-        assert_eq!((actual[2], actual[3]), expected.1);
+    for (actual, expected) in board.all_pieces().into_iter().zip(expected) {
+        assert_eq!(actual, expected);
     }
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn allows_iterating_over_white_pieces() {
     let board = Board::new();
 
-    let white_piece = Piece {
-        color: Color::White,
-        is_king: false,
-    };
-    let expected: Vec<(Piece, (u8, u8))> = vec![
-        (white_piece, (5, 0)),
-        (white_piece, (5, 2)),
-        (white_piece, (5, 4)),
-        (white_piece, (5, 6)), // 3rd white row
-        (white_piece, (6, 1)),
-        (white_piece, (6, 3)),
-        (white_piece, (6, 5)),
-        (white_piece, (6, 7)), // 2nd white row
-        (white_piece, (7, 0)),
-        (white_piece, (7, 2)),
-        (white_piece, (7, 4)),
-        (white_piece, (7, 6)), // 1st white row
+    let expected = vec![
+        game_piece!(Color::White, false, 5, 0),
+        game_piece!(Color::White, false, 5, 2),
+        game_piece!(Color::White, false, 5, 4),
+        game_piece!(Color::White, false, 5, 6), // 3rd white row
+        game_piece!(Color::White, false, 6, 1),
+        game_piece!(Color::White, false, 6, 3),
+        game_piece!(Color::White, false, 6, 5),
+        game_piece!(Color::White, false, 6, 7), // 2nd white row
+        game_piece!(Color::White, false, 7, 0),
+        game_piece!(Color::White, false, 7, 2),
+        game_piece!(Color::White, false, 7, 4),
+        game_piece!(Color::White, false, 7, 6), // 1st white row
     ];
 
-    for (actual, expected) in board.pieces(Color::White).chunks(4).zip(expected) {
-        assert_eq!(actual[0], expected.0.color as u8);
-        assert_eq!(actual[1], expected.0.is_king as u8);
-        assert_eq!((actual[2], actual[3]), expected.1);
+    for (actual, expected) in board.pieces(Color::White).zip(expected) {
+        assert_eq!(actual, expected);
     }
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn allows_iterating_over_black_pieces() {
     let board = Board::new();
 
-    let black_piece = Piece {
-        color: Color::Black,
-        is_king: false,
-    };
-    let expected: Vec<(Piece, (u8, u8))> = vec![
-        (black_piece, (0, 1)),
-        (black_piece, (0, 3)),
-        (black_piece, (0, 5)),
-        (black_piece, (0, 7)), // 1st black row
-        (black_piece, (1, 0)),
-        (black_piece, (1, 2)),
-        (black_piece, (1, 4)),
-        (black_piece, (1, 6)), // 2nd black row
-        (black_piece, (2, 1)),
-        (black_piece, (2, 3)),
-        (black_piece, (2, 5)),
-        (black_piece, (2, 7)), // 3rd black row
+    let expected = vec![
+        game_piece!(Color::Black, false, 0, 1),
+        game_piece!(Color::Black, false, 0, 3),
+        game_piece!(Color::Black, false, 0, 5),
+        game_piece!(Color::Black, false, 0, 7), // 1st black row
+        game_piece!(Color::Black, false, 1, 0),
+        game_piece!(Color::Black, false, 1, 2),
+        game_piece!(Color::Black, false, 1, 4),
+        game_piece!(Color::Black, false, 1, 6), // 2nd black row
+        game_piece!(Color::Black, false, 2, 1),
+        game_piece!(Color::Black, false, 2, 3),
+        game_piece!(Color::Black, false, 2, 5),
+        game_piece!(Color::Black, false, 2, 7), // 3rd black row
     ];
 
-    for (actual, expected) in board.pieces(Color::Black).chunks(4).zip(expected) {
-        assert_eq!(actual[0], expected.0.color as u8);
-        assert_eq!(actual[1], expected.0.is_king as u8);
-        assert_eq!((actual[2], actual[3]), expected.1);
+    for (actual, expected) in board.pieces(Color::Black).zip(expected) {
+        assert_eq!(actual, expected);
     }
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn produces_valid_moves_for_a_starting_board() {
     let board = Board::new();
 
     let moves = board.moves_for(5, 2);
-    let moves: Vec<_> = moves.chunks(3).collect();
 
     assert_eq!(moves.len(), 2);
     assert_eq!(
-        (moves[0][0], moves[0][1], moves[0][2]),
-        (MovementType::Free as u8, 4, 1)
+        moves[0],
+        Movement {
+            movement_type: MovementType::Free,
+            row: 4,
+            col: 1
+        }
     );
     assert_eq!(
-        (moves[1][0], moves[1][1], moves[1][2]),
-        (MovementType::Free as u8, 4, 3)
+        moves[1],
+        Movement {
+            movement_type: MovementType::Free,
+            row: 4,
+            col: 3
+        }
     );
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn produces_valid_movable_pieces_for_a_staring_board() {
     let board = Board::new();
 
-    let raw = board.get_movable_pieces(Color::White);
-    let pieces: Vec<_> = raw.chunks(4).collect();
+    let pieces: Vec<_> = board.get_movable_pieces(Color::White).collect();
 
     assert_eq!(pieces.len(), 4);
-    assert_eq!((pieces[0][2], pieces[0][3]), (5, 0));
-    assert_eq!((pieces[1][2], pieces[1][3]), (5, 2));
-    assert_eq!((pieces[2][2], pieces[2][3]), (5, 4));
-    assert_eq!((pieces[3][2], pieces[3][3]), (5, 6));
+    assert_eq!(pieces[0], game_piece!(Color::White, false, 5, 0));
+    assert_eq!(pieces[1], game_piece!(Color::White, false, 5, 2));
+    assert_eq!(pieces[2], game_piece!(Color::White, false, 5, 4));
+    assert_eq!(pieces[3], game_piece!(Color::White, false, 5, 6));
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn produces_only_forced_movable_pieces_if_some_are_available() {
     let mut board = Board::new();
     board.make_move(5, 0, 4, 1).unwrap();
     board.make_move(2, 3, 3, 2).unwrap();
 
-    let raw = board.get_movable_pieces(Color::White);
-    let pieces: Vec<_> = raw.chunks(4).collect();
+    let pieces: Vec<_> = board.get_movable_pieces(Color::White).collect();
 
     assert_eq!(pieces.len(), 1);
-    assert_eq!((pieces[0][2], pieces[0][3]), (4, 1));
+    assert_eq!(pieces[0], game_piece!(Color::White, false, 4, 1));
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn attempting_to_move_empty_square_fails() {
     let mut board = Board::new();
 
@@ -255,7 +248,7 @@ fn attempting_to_move_empty_square_fails() {
     assert!(result.is_err());
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn attempting_to_move_white_square_fails() {
     let mut board = Board::new();
 
@@ -263,7 +256,7 @@ fn attempting_to_move_white_square_fails() {
     assert!(result.is_err());
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn attempting_an_invalid_move_fails() {
     let mut board = Board::new();
 
@@ -271,7 +264,7 @@ fn attempting_an_invalid_move_fails() {
     assert!(result.is_err());
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn move_normally() {
     let mut board = Board::new();
 
@@ -284,7 +277,7 @@ fn move_normally() {
     assert_eq!(board.count_pieces(Color::Black), 12);
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn move_by_taking() {
     let mut board = Board::new();
     board.squares[5][0] = None;
@@ -313,28 +306,18 @@ fn move_by_taking() {
     assert_eq!(board.count_pieces(Color::Black), 11);
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn moving_to_last_row_makes_king() {
-    let white_piece = Some(Piece {
-        color: Color::White,
-        is_king: false,
-    });
-    let black_piece = Some(Piece {
-        color: Color::Black,
-        is_king: false,
-    });
-    let mut board = Board {
-        squares: [
-            [None; 4],
-            [white_piece, None, None, None],
-            [None; 4],
-            [None; 4],
-            [None; 4],
-            [black_piece, None, None, None],
-            [None; 4],
-            [None; 4],
-        ],
-    };
+    let mut board = utils::make_board([
+        "' * ' * ' * ' *",
+        "w ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "* ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "b ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "* ' * ' * ' * '",
+    ]);
 
     assert!(board.get(0, 1).is_none());
     assert!(board.get(1, 0).is_some());
@@ -351,28 +334,18 @@ fn moving_to_last_row_makes_king() {
     assert!(piece.is_king);
 }
 
-#[wasm_bindgen_test]
+#[test]
 fn moving_from_last_row_remains_king() {
-    let white_piece = Some(Piece {
-        color: Color::White,
-        is_king: true,
-    });
-    let black_piece = Some(Piece {
-        color: Color::Black,
-        is_king: false,
-    });
-    let mut board = Board {
-        squares: [
-            [white_piece, None, None, None],
-            [None; 4],
-            [None; 4],
-            [None; 4],
-            [None; 4],
-            [black_piece, None, None, None],
-            [None; 4],
-            [None; 4],
-        ],
-    };
+    let mut board = utils::make_board([
+        "' W ' * ' * ' *",
+        "* ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "* ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "b ' * ' * ' * '",
+        "' * ' * ' * ' *",
+        "* ' * ' * ' * '",
+    ]);
 
     assert!(board.get(0, 1).is_some());
     assert!(board.get(1, 0).is_none());

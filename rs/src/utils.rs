@@ -1,5 +1,3 @@
-use crate::board::{Board, Color, Piece};
-
 pub fn set_panic_hook() {
     // When the `console_error_panic_hook` feature is enabled, we can call the
     // `set_panic_hook` function at least once during initialization, and then
@@ -33,7 +31,9 @@ pub fn set_panic_hook() {
 /// assert_eq(board.piece_count(), 0);
 /// ```
 #[cfg(test)]
-pub(crate) fn make_board(board: [&str; 8]) -> Board {
+pub(crate) fn make_board(board: [&str; 8]) -> crate::board::Board {
+    use crate::board::{Board, Color, Piece};
+
     let mut squares = [
         [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4],
     ];

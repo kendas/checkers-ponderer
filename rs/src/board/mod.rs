@@ -3,16 +3,13 @@ use std::usize;
 
 use wasm_bindgen::prelude::*;
 
-use crate::rules::{self, MovementType};
+use crate::rules::{self, Movement, MovementType};
 
-#[wasm_bindgen]
 pub struct Board {
     squares: [[Option<Piece>; 4]; 8],
 }
 
-#[wasm_bindgen]
 impl Board {
-    #[wasm_bindgen(constructor)]
     pub fn new() -> Board {
         let black_piece = Some(Piece {
             color: Color::Black,
@@ -59,30 +56,20 @@ impl Board {
         }
     }
 
-    pub fn all_pieces(&self) -> Vec<u8> {
+    pub fn all_pieces(&self) -> impl Iterator<Item = GamePiece> +'_ {
         self.get_normalized_pieces()
-            .map(|p| p.into_vec())
-            .flatten()
-            .collect()
     }
 
-    pub fn pieces(&self, color: Color) -> Vec<u8> {
+    pub fn pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> +'_ {
         self.get_normalized_pieces()
             .filter(move |piece| piece.color == color)
-            .map(|p| p.into_vec())
-            .flatten()
-            .collect()
     }
 
-    pub fn moves_for(&self, row: usize, col: usize) -> Vec<u8> {
+    pub fn moves_for(&self, row: usize, col: usize) -> Vec<Movement> {
         rules::get_moves(&self, row, col)
-            .into_iter()
-            .map(|m| m.into_vec())
-            .flatten()
-            .collect()
     }
 
-    pub fn get_movable_pieces(&self, color: Color) -> Vec<u8> {
+    pub fn get_movable_pieces(&self, color: Color) -> impl Iterator<Item = GamePiece> +'_ {
         let (forced, free): (Vec<_>, Vec<_>) = self
             .get_normalized_pieces()
             .filter(move |piece| piece.color == color)
@@ -91,9 +78,7 @@ impl Board {
             .partition(|(_, m)| rules::has_forced_moves(m));
         if !forced.is_empty() { forced } else { free }
             .into_iter()
-            .map(|(p, _)| p.into_vec())
-            .flatten()
-            .collect()
+            .map(|(p, _)| p)
     }
 
     pub fn make_move(
@@ -102,7 +87,7 @@ impl Board {
         from_col: u8,
         to_row: u8,
         to_col: u8,
-    ) -> Result<(), JsValue> {
+    ) -> Result<(), InvalidMove> {
         let valid_move = rules::get_moves(&self, from_row as usize, from_col as usize)
             .into_iter()
             .find(|m| m.row == to_row as usize && m.col == to_col as usize);
@@ -128,7 +113,7 @@ impl Board {
                 self.squares[row][col] = Some(piece);
                 Ok(())
             }
-            None => Err(JsValue::from_str("Invalid move")),
+            None => Err(InvalidMove),
         }
     }
 }
@@ -187,7 +172,7 @@ pub struct GamePiece {
 }
 
 impl GamePiece {
-    fn into_vec(self) -> Vec<u8> {
+    pub(crate) fn into_vec(self) -> Vec<u8> {
         self.into()
     }
 }
@@ -216,6 +201,9 @@ pub enum Color {
     White,
     Black,
 }
+
+#[derive(Debug)]
+pub struct InvalidMove;
 
 #[cfg(test)]
 mod tests;

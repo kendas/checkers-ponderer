@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::board::{Board, Color, GamePiece};
 
 #[wasm_bindgen]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Movement {
     pub movement_type: MovementType,
     pub row: usize,
@@ -13,7 +13,7 @@ pub struct Movement {
 }
 
 impl Movement {
-    pub(super) fn into_vec(self) -> Vec<u8> {
+    pub(crate) fn into_vec(self) -> Vec<u8> {
         self.into()
     }
 }
