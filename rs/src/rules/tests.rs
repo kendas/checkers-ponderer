@@ -1,11 +1,11 @@
 use wasm_bindgen_test::*;
 
 use super::*;
-use crate::board::{Board, Color, Piece};
+use crate::utils;
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -39,7 +39,7 @@ fn non_king_white_free_movement() {
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_friendly() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' w ' * '",
         "' * ' w ' * ' *",
@@ -65,7 +65,7 @@ fn non_king_white_free_movement_blocked_by_friendly() {
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_left_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -91,7 +91,7 @@ fn non_king_white_free_movement_blocked_by_left_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_right_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' w",
@@ -117,7 +117,7 @@ fn non_king_white_free_movement_blocked_by_right_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' b",
@@ -143,7 +143,7 @@ fn non_king_white_free_movement_blocked_by_enemy_and_right_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "b ' * ' * ' * '",
         "' w ' * ' * ' *",
@@ -169,7 +169,7 @@ fn non_king_white_free_movement_blocked_by_enemy_and_left_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_white_forced_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' b ' * ' *",
@@ -195,7 +195,7 @@ fn non_king_white_forced_movement() {
 
 #[wasm_bindgen_test]
 fn non_king_white_forced_movement_with_possibilities() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' b ' b ' *",
@@ -229,7 +229,7 @@ fn non_king_white_forced_movement_with_possibilities() {
 
 #[wasm_bindgen_test]
 fn non_king_black_free_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -263,7 +263,7 @@ fn non_king_black_free_movement() {
 
 #[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_friendly() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -289,7 +289,7 @@ fn non_king_black_free_movement_blocked_by_friendly() {
 
 #[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_left_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -315,7 +315,7 @@ fn non_king_black_free_movement_blocked_by_left_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_black_free_movement_blocked_by_right_wall() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -341,7 +341,7 @@ fn non_king_black_free_movement_blocked_by_right_wall() {
 
 #[wasm_bindgen_test]
 fn non_king_black_forced_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -367,7 +367,7 @@ fn non_king_black_forced_movement() {
 
 #[wasm_bindgen_test]
 fn king_white_free_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -417,7 +417,7 @@ fn king_white_free_movement() {
 
 #[wasm_bindgen_test]
 fn king_white_free_movement_blocked_by_friendly() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' w ' *",
@@ -459,7 +459,7 @@ fn king_white_free_movement_blocked_by_friendly() {
 
 #[wasm_bindgen_test]
 fn king_white_forced_movement() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -485,7 +485,7 @@ fn king_white_forced_movement() {
 
 #[wasm_bindgen_test]
 fn king_white_forced_movement_multiple() {
-    let board = make_board([
+    let board = utils::make_board([
         "' * ' * ' * ' *",
         "* ' * ' * ' * '",
         "' * ' * ' * ' *",
@@ -515,67 +515,4 @@ fn king_white_forced_movement_multiple() {
         } => assert_eq!((row, col), (&6, &1)),
         other => panic!("Unexpected move {:?}", other),
     }
-}
-
-/// Takes a board definition as an array of strings and creates a board.
-///
-/// "*" means a black square, "'" means a white square
-/// "w" is a white piece, "W" is a white king,
-/// "b" is a black piece, "B" is a black king.
-///
-/// # Examples
-///
-/// ```rust
-/// let board = make_board([
-///     "' * ' * ' * ' *",
-///     "* ' * ' * ' * '",
-///     "' * ' * ' * ' *",
-///     "* ' * ' * ' * '",
-///     "' * ' * ' * ' *",
-///     "* ' * ' * ' * '",
-///     "' * ' * ' * ' *",
-///     "* ' * ' * ' * '",
-/// ]);
-/// assert_eq(board.piece_count(), 0);
-/// ```
-fn make_board(board: [&str; 8]) -> Board {
-    let mut squares = [
-        [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4], [None; 4],
-    ];
-    for (r, row) in board.iter().enumerate() {
-        for (c, symbol) in row
-            .split_ascii_whitespace()
-            .enumerate()
-            .filter(|(c, _)| (c + r + 1) % 2 == 0)
-        {
-            match symbol {
-                "w" => {
-                    squares[r][c / 2] = Some(Piece {
-                        color: Color::White,
-                        is_king: false,
-                    })
-                }
-                "W" => {
-                    squares[r][c / 2] = Some(Piece {
-                        color: Color::White,
-                        is_king: true,
-                    })
-                }
-                "b" => {
-                    squares[r][c / 2] = Some(Piece {
-                        color: Color::Black,
-                        is_king: false,
-                    })
-                }
-                "B" => {
-                    squares[r][c / 2] = Some(Piece {
-                        color: Color::Black,
-                        is_king: true,
-                    })
-                }
-                _ => {}
-            }
-        }
-    }
-    Board::from(squares)
 }
