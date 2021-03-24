@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
 
-use crate::board::{Board, Color};
+use crate::{
+    board::{Board, Color},
+    rules::MovementType,
+};
 
 pub struct Predictor {
     depth: u8,
@@ -19,12 +22,12 @@ impl Predictor {
     }
 
     pub fn get_next_move(&mut self) -> Result<Move, NoMoreMoves> {
-        let search_depth = 2 * self.depth - 1;
-        self.cache.calculate_moves(search_depth, self.color);
-        let result = self.cache.branches.iter().max_by(|(_, a), (_, b)| {
-            a.get_score(search_depth, self.color)
-                .cmp(&b.get_score(search_depth, self.color))
-        });
+        self.cache.calculate_moves(2 * self.depth - 1, self.color);
+        let result = self
+            .cache
+            .branches
+            .iter()
+            .max_by(|(_, a), (_, b)| a.get_score(self.color).cmp(&b.get_score(self.color)));
         match result {
             Some((move_, _)) => Ok(move_.clone()),
             None => Err(NoMoreMoves),
@@ -73,25 +76,32 @@ impl PredictionCache {
                         .board
                         .make_move(piece.row, piece.col, movement.row, movement.col)
                         .unwrap();
-                    self.branches.insert(move_.clone(), PredictionCache::new(board));
+                    self.branches
+                        .insert(move_.clone(), PredictionCache::new(board));
                 }
                 let cache = self.branches.get_mut(&move_).unwrap();
-                let color = match color {
-                    Color::Black => Color::White,
-                    Color::White => Color::Black,
+                let (color, depth) = match movement.movement_type {
+                    MovementType::Free => (
+                        match color {
+                            Color::Black => Color::White,
+                            Color::White => Color::Black,
+                        },
+                        depth - 1,
+                    ),
+                    MovementType::Forced => (color, depth),
                 };
-                if depth > 1 {
-                    cache.calculate_moves(depth - 1, color);
+                if depth > 0 {
+                    cache.calculate_moves(depth, color);
                 }
             }
         }
     }
 
-    fn get_score(&self, depth: u8, color: Color) -> u8 {
-        if depth > 1 && !self.branches.is_empty() {
+    fn get_score(&self, color: Color) -> u8 {
+        if !self.branches.is_empty() {
             self.branches
                 .values()
-                .map(|p| p.get_score(depth - 1, color))
+                .map(|p| p.get_score(color))
                 .max()
                 .unwrap_or(0)
         } else {
